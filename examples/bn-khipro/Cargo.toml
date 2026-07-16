@@ -1,0 +1,16 @@
+[package]
+name = "bn-khipro"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "A compositional keyboard layout or input method concept for Bengali, aiming to be the fastest typing method available for the language."
+repository.workspace = true
+license.workspace = true
+keywords = ["input-method"]
+categories = ["input-method", "m17n"]
+
+[dependencies]
+m17n-im = { path = "../..", features = ["dynamic", "embed"] }
+
+[build-dependencies]
+m17n-im = { path = "../..", features = ["codegen"] }

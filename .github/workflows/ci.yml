@@ -1,0 +1,205 @@
+env:
+  # We aim to always test with the latest stable Rust toolchain, however we pin to a specific
+  # version like 1.70. Note that we only specify MAJOR.MINOR and not PATCH so that bugfixes still
+  # come automatically. If the version specified here is no longer the latest stable version,
+  # then please feel free to submit a PR that adjusts it along with the potential clippy fixes.
+  RUST_STABLE_VER: "1.97" # In quotes because otherwise (e.g.) 1.70 would be interpreted as 1.7
+  # The purpose of checking with the minimum supported Rust toolchain is to detect its staleness.
+  # If the compilation fails, then the version specified here needs to be bumped up to reality.
+  # Be sure to also update the rust-version property in the workspace Cargo.toml file,
+  # plus all the README.md files of the affected packages.
+  RUST_MIN_VER: "1.88" # Linux availability
+
+# Rationale
+#
+# We don't run clippy with --all-targets because then even --lib and --bins are compiled with
+# dev dependencies enabled, which does not match how they would be compiled by users.
+# A dev dependency might enable a feature that we need for a regular dependency,
+# and checking with --all-targets would not find our feature requirements lacking.
+# This problem still applies to cargo resolver version 2.
+# Thus we split all the targets into two steps, one with --lib --bins
+# and another with --tests --benches --examples.
+# Also, we can't give --lib --bins explicitly because then cargo will error on binary-only packages.
+# Luckily the default behavior of cargo with no explicit targets is the same but without the error.
+#
+# We use cargo-hack for a similar reason. Cargo's --workspace will do feature unification across
+# the whole workspace. While cargo-hack will instead check each workspace package separately.
+#
+# Using cargo-hack also allows us to more easily test the feature matrix of our packages.
+# We use --each-feature & --optional-deps which will run a separate check for every feature.
+#
+# We use cargo-nextest, which has a faster concurrency model for running tests.
+# However cargo-nextest does not support running doc tests, so we also have a cargo test --doc step.
+# For more information see https://github.com/nextest-rs/nextest/issues/16
+#
+# The MSRV jobs run only cargo check because different clippy versions can disagree on goals and
+# running tests introduces dev dependencies which may require a higher MSRV than the bare package.
+# Checking is limited to packages that are intended for publishing to keep MSRV as low as possible.
+#
+# If the workspace uses debug_assertions then we verify code twice, with it set to true or false.
+# We always keep it true for external dependencies so that we can reuse the cache for faster builds.
+#
+# We don't save caches in the merge-group cases, because those caches will never be re-used (apart
+# from the very rare cases where there are multiple PRs in the merge queue).
+# This is because GitHub doesn't share caches between merge queues and the main branch.
+
+name: CI
+
+on:
+  pull_request:
+  merge_group:
+  # We run on push, even though the commit is the same as when we ran in merge_group.
+  # This allows the cache to be primed.
+  # See https://github.com/orgs/community/discussions/66430
+  push:
+    branches:
+      - master
+
+jobs:
+  fmt:
+    name: formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust ${{ env.RUST_STABLE_VER }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_STABLE_VER }}
+          components: rustfmt
+
+      - name: Run cargo fmt
+        run: cargo fmt --all --check
+
+      - name: Install Tombi
+        uses: tombi-toml/setup-tombi@v1.2.4
+
+      - name: Run tombi format
+        run: tombi format --check --diff
+
+      - name: Install ripgrep
+        run: |
+          sudo apt update
+          sudo apt install ripgrep
+
+      - name: Check copyright headers
+        run: bash .github/copyright.sh
+
+      - name: Check debug_assertions presence
+        run: bash .github/debug_assertions.sh
+
+      - name: Install cargo-rdme
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-rdme@1.4.8
+
+      - name: Run cargo rdme
+        run: cargo rdme --check
+
+  clippy-stable:
+    name: cargo clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust ${{ env.RUST_STABLE_VER }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_STABLE_VER }}
+          components: clippy
+
+      - name: Install cargo-hack
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.event_name != 'merge_group' }}
+
+      - name: Run cargo clippy
+        run: cargo hack clippy --workspace --locked --profile ci --each-feature -- -D warnings
+
+  test-stable:
+    name: cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust ${{ env.RUST_STABLE_VER }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_STABLE_VER }}
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.event_name != 'merge_group' }}
+
+      - name: Run cargo test
+        run: cargo test --workspace --locked --profile ci --all-features --no-fail-fast
+        
+      - name: Run cargo test --doc
+        run: cargo test --doc --workspace --locked --profile ci --all-features --no-fail-fast
+  
+  check-msrv:
+    name: cargo check (msrv)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust ${{ env.RUST_MIN_VER }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_MIN_VER }}
+
+      - name: Install cargo-hack
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-hack
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.event_name != 'merge_group' }}
+
+      - name: Run cargo check
+        run: cargo hack check --workspace --ignore-private --locked --profile ci --optional-deps --each-feature
+
+  doc:
+    name: cargo doc
+    # NOTE: We don't have any platform specific docs in this workspace, so we only run on Ubuntu.
+    #       If we get per-platform docs (win/macos/linux/wasm32/..) then doc jobs should match that.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust nightly
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Restore cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.event_name != 'merge_group' }}
+
+      # We test documentation using nightly to match docs.rs.
+      - name: Run cargo doc
+        run: cargo doc --workspace --locked --profile ci --all-features --no-deps --document-private-items -Zunstable-options -Zrustdoc-scrape-examples
+        env:
+          RUSTDOCFLAGS: '--cfg docsrs -D warnings'
+
+  # If this fails, consider changing your text or adding something to .typos.toml.
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Check typos
+        uses: crate-ci/typos@v1.45.0
