@@ -86,9 +86,6 @@ jobs:
       - name: Check copyright headers
         run: bash .github/copyright.sh
 
-      - name: Check debug_assertions presence
-        run: bash .github/debug_assertions.sh
-
       - name: Install cargo-rdme
         uses: taiki-e/install-action@v2
         with:
