@@ -6,8 +6,8 @@ rust-version.workspace = true
 description = "A generalized parser, interpreter engine, and Rust code generator for the m17n input method (.mim) database format"
 repository.workspace = true
 license.workspace = true
-keywords = ["input-method", "parser"]
-categories = ["input-method", "m17n", "parser"]
+keywords = ["input-method", "m17n", "parser"]
+categories = ["development-tools::build-utils", "parser-implementations", "text-processing"]
 
 [package.metadata.docs.rs]
 all-features = true

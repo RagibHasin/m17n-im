@@ -8,6 +8,7 @@ repository.workspace = true
 license.workspace = true
 keywords = ["input-method"]
 categories = ["input-method", "m17n"]
+publish = false
 
 [dependencies]
 m17n-im = { path = "../..", features = ["dynamic", "embed"] }
