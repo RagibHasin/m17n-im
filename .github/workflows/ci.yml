@@ -73,7 +73,9 @@ jobs:
         run: cargo fmt --all --check
 
       - name: Install Tombi
-        uses: tombi-toml/setup-tombi@v1.2.4
+        uses: tombi-toml/setup-tombi@v1.9.5
+        with:
+          version: latest
 
       - name: Run tombi format
         run: tombi format --check --diff

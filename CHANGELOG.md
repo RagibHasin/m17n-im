@@ -25,5 +25,5 @@ This release has an MSRV of 1.88.
 - `InputMethod` abstraction and its two user facing instance `ParsedInputMethod` and `EmbeddableInputMethod`.
 - `.mim` file parser and Rust code generator for it.
 
-[Unreleased]: https://github.com/linebender/kurbo/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/linebender/kurbo/releases/tag/v0.1.0
+[Unreleased]: https://github.com/RagibHasin/m17n-im/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.1.0
