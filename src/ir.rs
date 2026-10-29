@@ -17,13 +17,13 @@ pub trait InputMethod: Debug {
     type MapId: Id;
 
     /// Identifier for the markers.
-    type MarkerId: Id + std::hash::Hash + 'static;
+    type MarkerId: Id;
 
     /// Identifier for the states.
     type StateId: Id;
 
     /// Identifier for the variables.
-    type VarId: Id + std::hash::Hash + 'static;
+    type VarId: Id;
 
     /// Retrieves the [`Map`] with the `id`.
     fn get_map(

@@ -5,7 +5,7 @@
 
 use m17n_im::__embed::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MapId {
     Diacritic,
     Fuser,
@@ -29,7 +29,7 @@ pub enum MapId {
 }
 impl Id for MapId {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MarkerId {
     Cstm1,
     Cstm2,
@@ -38,7 +38,7 @@ pub enum MarkerId {
 }
 impl Id for MarkerId {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StateId {
     Init,
     ShorState,
@@ -52,7 +52,7 @@ pub enum StateId {
 }
 impl Id for StateId {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VarId {
     CmpdCnstFlag,
     Fflag,

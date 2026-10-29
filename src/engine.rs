@@ -3,7 +3,6 @@
 //! A generic execution engine that runs directly against an [`InputMethod`].
 
 use std::borrow::Cow;
-use std::collections::HashMap;
 
 use crate::ir::*;
 
@@ -11,11 +10,11 @@ use crate::ir::*;
 struct Snapshot<MarkerId, StateId, VarId> {
     state: StateId,
     prev_state: Option<StateId>,
-    vars: HashMap<VarId, i32>,
+    vars: Vec<(VarId, i32)>,
     committed: String,
     preedit: Vec<char>,
     current_pos: usize,
-    marks: HashMap<MarkerId, usize>,
+    marks: Vec<(MarkerId, usize)>,
 }
 
 /// The entry point for executing a m17n [`InputMethod`].
@@ -25,11 +24,11 @@ pub struct Engine<IM: InputMethod + 'static> {
 
     state: IM::StateId,
     prev_state: Option<IM::StateId>,
-    vars: HashMap<IM::VarId, i32>,
+    vars: Vec<(IM::VarId, i32)>,
     committed: String,
     preedit: Vec<char>,
-    current_position: usize,
-    marks: HashMap<IM::MarkerId, usize>,
+    current_pos: usize,
+    marks: Vec<(IM::MarkerId, usize)>,
     last_snapshot: Option<Snapshot<IM::MarkerId, IM::StateId, IM::VarId>>,
     /// Characters pushed back by `pushback` that still need (re-)matching, in the order
     /// they should be consumed. See module docs for why this can't just be a slice
@@ -46,11 +45,11 @@ impl<IM: InputMethod> Engine<IM> {
             input_method,
             state: initial_state,
             prev_state: None,
-            vars: HashMap::new(),
+            vars: Vec::new(),
             committed: String::new(),
             preedit: Vec::new(),
-            current_position: 0,
-            marks: HashMap::new(),
+            current_pos: 0,
+            marks: Vec::new(),
             last_snapshot: None,
             requeue: String::new(),
             unhandled: false,
@@ -76,7 +75,7 @@ impl<IM: InputMethod> Engine<IM> {
         self.prev_state = None;
         self.vars.clear();
         self.preedit.clear();
-        self.current_position = 0;
+        self.current_pos = 0;
         self.last_snapshot = None;
         self.requeue.clear();
         self.unhandled = false;
@@ -211,7 +210,7 @@ impl<IM: InputMethod> Engine<IM> {
             vars: self.vars.clone(),
             committed: self.committed.clone(),
             preedit: self.preedit.clone(),
-            current_pos: self.current_position,
+            current_pos: self.current_pos,
             marks: self.marks.clone(),
         }
     }
@@ -231,7 +230,7 @@ impl<IM: InputMethod> Engine<IM> {
         self.vars = vars;
         self.committed = committed;
         self.preedit = preedit;
-        self.current_position = current_position;
+        self.current_pos = current_position;
         self.marks = marks;
     }
 
@@ -249,20 +248,20 @@ impl<IM: InputMethod> Engine<IM> {
     }
 
     fn delete(&mut self, other: usize) {
-        let range = if other < self.current_position {
-            other..self.current_position
+        let range = if other < self.current_pos {
+            other..self.current_pos
         } else {
-            self.current_position..other
+            self.current_pos..other
         };
-        self.marks.retain(|_, pos| !range.contains(pos));
+        self.marks.retain(|(_, pos)| !range.contains(pos));
         self.preedit.drain(range);
-        self.current_position = self.current_position.min(other);
+        self.current_pos = self.current_pos.min(other);
     }
 
     fn eval(&self, x: &Expr<IM::VarId>) -> i32 {
         match x {
             Expr::Integer(v) => *v,
-            Expr::Variable(name) => self.vars.get(name).copied().unwrap_or(0),
+            Expr::Variable(name) => get_value_from_vecmap(&self.vars, name).unwrap_or(0),
             Expr::Op(op, args) => {
                 let vals: Vec<i32> = args.iter().map(|a| self.eval(a)).collect();
                 match op {
@@ -313,13 +312,15 @@ impl<IM: InputMethod> Engine<IM> {
     fn marker_pos(&self, marker: &Marker<IM::MarkerId>) -> usize {
         match marker {
             Marker::Start => 0,
-            Marker::MatchStart => self.current_position,
+            Marker::MatchStart => self.current_pos,
             Marker::End => self.preedit.len(),
-            Marker::Prev => self.current_position.saturating_sub(1),
-            Marker::Next => self.preedit.len().min(self.current_position + 1),
-            Marker::RelPrev(r) => self.current_position.saturating_sub(*r),
-            Marker::RelNext(r) => self.preedit.len().min(self.current_position + *r),
-            Marker::Custom(id) => self.marks.get(id).copied().unwrap_or(self.current_position),
+            Marker::Prev => self.current_pos.saturating_sub(1),
+            Marker::Next => self.preedit.len().min(self.current_pos + 1),
+            Marker::RelPrev(r) => self.current_pos.saturating_sub(*r),
+            Marker::RelNext(r) => self.preedit.len().min(self.current_pos + *r),
+            Marker::Custom(name) => {
+                get_value_from_vecmap(&self.marks, name).unwrap_or(self.current_pos)
+            }
             Marker::Candidate(_) | Marker::GroupStart | Marker::GroupEnd | Marker::Selected => {
                 unreachable!("{marker:?} is invalid for delete/move")
             }
@@ -331,29 +332,29 @@ impl<IM: InputMethod> Engine<IM> {
             Action::InsertText(s) => {
                 let old_len = self.preedit.len();
                 self.preedit
-                    .splice(self.current_position..self.current_position, s.chars());
+                    .splice(self.current_pos..self.current_pos, s.chars());
                 let n_added = self.preedit.len() - old_len;
-                for pos in self.marks.values_mut() {
-                    if *pos > self.current_position {
+                for (_, pos) in &mut self.marks {
+                    if *pos > self.current_pos {
                         *pos += n_added;
                     }
                 }
-                self.current_position += n_added;
+                self.current_pos += n_added;
             }
             Action::InsertChar(c) => {
-                self.preedit.insert(self.current_position, *c);
-                for pos in self.marks.values_mut() {
-                    if *pos > self.current_position {
+                self.preedit.insert(self.current_pos, *c);
+                for (_, pos) in &mut self.marks {
+                    if *pos > self.current_pos {
                         *pos += 1;
                     }
                 }
-                self.current_position += 1;
+                self.current_pos += 1;
             }
-            Action::InsertVariable(id) => {
-                let c = self.vars.get(id).copied().unwrap_or(0);
-                if let Some(c) = char::from_u32(c as _) {
-                    self.preedit.insert(self.current_position, c);
-                    self.current_position += 1;
+            Action::InsertVariable(name) => {
+                let c = get_value_from_vecmap(&self.vars, name).unwrap_or(0);
+                if let Some(c) = char::from_u32(c.cast_unsigned()) {
+                    self.preedit.insert(self.current_pos, c);
+                    self.current_pos += 1;
                 }
             }
             Action::InsertCandidates(groups) => {
@@ -369,17 +370,17 @@ impl<IM: InputMethod> Engine<IM> {
             }
             Action::DeleteMarker(m) => self.delete(self.marker_pos(m)),
             Action::DeletePosition(n) => self.delete(self.resolve_pos(*n)),
-            Action::MoveMarker(marker) => self.current_position = self.marker_pos(marker),
-            Action::MovePosition(n) => self.current_position = self.resolve_pos(*n),
-            Action::Mark(id) => {
-                self.marks.insert(*id, self.current_position);
+            Action::MoveMarker(marker) => self.current_pos = self.marker_pos(marker),
+            Action::MovePosition(n) => self.current_pos = self.resolve_pos(*n),
+            Action::Mark(name) => {
+                set_value_in_vecmap(&mut self.marks, *name, self.current_pos);
             }
             Action::PushbackCount(n) => {
                 let take = (*n).unsigned_abs() as usize;
                 let start = self.preedit.len().saturating_sub(take);
                 let moved: String = self.preedit.split_off(start).into_iter().collect();
                 self.requeue.insert_str(0, &moved);
-                self.current_position = self.current_position.min(self.preedit.len());
+                self.current_pos = self.current_pos.min(self.preedit.len());
             }
             Action::Undo | Action::UndoCount(_) | Action::UndoVariable(_) => {
                 if let Some(s) = self.last_snapshot.take() {
@@ -401,7 +402,7 @@ impl<IM: InputMethod> Engine<IM> {
             }
             Action::Set(cmd, name, expr) => {
                 let x = self.eval(expr);
-                let a = self.vars.get(name).copied().unwrap_or(0);
+                let a = get_value_from_vecmap(&self.vars, name).unwrap_or(0);
                 let a = match cmd {
                     SetCmd::Set => x,
                     SetCmd::Add => a + x,
@@ -410,7 +411,7 @@ impl<IM: InputMethod> Engine<IM> {
                     SetCmd::Div if x != 0 => a / x,
                     SetCmd::Div => a,
                 };
-                self.vars.insert(*name, a);
+                set_value_in_vecmap(&mut self.vars, *name, a);
             }
             Action::If(cond, then_actions, else_actions) => {
                 if self.eval_condition(cond) {
@@ -437,5 +438,17 @@ impl<IM: InputMethod> Engine<IM> {
             | Action::SelectIndex(_)
             | Action::SelectVariable(_) => {}
         }
+    }
+}
+
+fn get_value_from_vecmap<K: PartialEq + Copy, V: Copy>(map: &[(K, V)], key: &K) -> Option<V> {
+    map.iter().find_map(|(id, val)| (id == key).then_some(*val))
+}
+
+fn set_value_in_vecmap<K: PartialEq + Copy, V>(map: &mut Vec<(K, V)>, key: K, value: V) {
+    if let Some((_, val)) = map.iter_mut().find(|(id, _)| *id == key) {
+        *val = value;
+    } else {
+        map.push((key, value));
     }
 }

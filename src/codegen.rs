@@ -233,7 +233,7 @@ impl<W: io::Write> Generator<'_, W> {
     }
 
     fn write_enum(&mut self, reg: IdRegistry, name: &str) -> io::Result<()> {
-        self.writeln("#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]")?;
+        self.writeln("#[derive(Debug, Clone, Copy, PartialEq, Eq)]")?;
         self.write(format_args!("pub enum {name} {{"))?;
         if !reg.order.is_empty() {
             self.writeln("")?;
