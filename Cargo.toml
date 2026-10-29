@@ -19,7 +19,7 @@ cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
 members = ["examples/bn-khipro"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 rust-version = "1.88"
 repository = "https://github.com/RagibHasin/m17n-im"
