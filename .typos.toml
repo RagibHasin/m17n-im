@@ -25,9 +25,12 @@ extend-ignore-re = [
 # Include .github, .cargo, etc.
 ignore-hidden = false
 extend-exclude = [
-  "examples/bn-khipro/bn-khipro.mim",
-  "examples/bn-khipro/testcases.tsv",
-  "examples/bn-khipro/src/data.rs",
+  "examples/bn-khipro/bn-khipro-classic.mim",
+  "examples/bn-khipro/testcases-classic.tsv",
+  "examples/bn-khipro/src/classic.rs",
+  "examples/bn-khipro/bn-khipro-dark.mim",
+  "examples/bn-khipro/testcases-dark.tsv",
+  "examples/bn-khipro/src/dark.rs",
   # /.git isn't in .gitignore, because git never tracks it.
   # Typos doesn't know that, though.
   "/.git",

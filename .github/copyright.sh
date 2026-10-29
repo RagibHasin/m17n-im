@@ -7,7 +7,7 @@
 #   -g "!src/special_directory"
 
 # Check all the standard Rust source files
-output=$(rg "^// SPDX-License-Identifier: MIT$\n\n" --files-without-match --multiline -g "*.rs" -g "!examples/bn-khipro/src/data.rs" .)
+output=$(rg "^// SPDX-License-Identifier: MIT$\n\n" --files-without-match --multiline -g "*.rs" -g "!examples/bn-khipro/src/classic.rs" -g "!examples/bn-khipro/src/dark.rs" .)
 
 if [ -n "$output" ]; then
 	echo -e "The following files lack the correct copyright header:\n"

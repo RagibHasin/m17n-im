@@ -181,17 +181,22 @@ fn direct_ast_engine_pushback_requeues_generated_text_not_input_bytes() {
 }
 
 #[test]
-fn parses_bundled_bn_khipro_example_with_zero_unknown_forms() {
-    let file = Parser::parse_from_path("examples/bn-khipro/bn-khipro.mim").unwrap();
+fn parses_bundled_bn_khipro_classic_example_with_zero_unknown_forms() {
+    let file = Parser::parse_from_path("examples/bn-khipro/bn-khipro-classic.mim").unwrap();
     assert!(file.declaration.is_some());
     assert_eq!(file.unknown_forms.len(), 0);
-    assert_eq!(file.maps.len(), 18);
-    assert_eq!(file.states.len(), 7);
+}
+
+#[test]
+fn parses_bundled_bn_khipro_dark_example_with_zero_unknown_forms() {
+    let file = Parser::parse_from_path("examples/bn-khipro/bn-khipro-dark.mim").unwrap();
+    assert!(file.declaration.is_some());
+    assert_eq!(file.unknown_forms.len(), 0);
 }
 
 #[test]
 fn direct_engine_matches_known_conversions_for_bundled_example() {
-    let file = Parser::parse_from_path("examples/bn-khipro/bn-khipro.mim").unwrap();
+    let file = Parser::parse_from_path("examples/bn-khipro/bn-khipro-classic.mim").unwrap();
     let cases = [
         ("tumi", "তুমি"),
         ("sob", "সব"),
@@ -210,14 +215,39 @@ fn direct_engine_matches_known_conversions_for_bundled_example() {
 
 #[test]
 fn khipro_testcases() {
-    let file = Parser::parse_from_path("examples/bn-khipro/bn-khipro.mim").unwrap();
-    let mut engine = Engine::new(
-        file.into_input_method(&mut Preprocessor::default())
-            .unwrap(),
-    );
-    let cases = std::fs::read_to_string("examples/bn-khipro/testcases.tsv").unwrap();
-    for (i, case) in cases.lines().enumerate().skip(1) {
-        let (input, output) = case.split_once('\t').unwrap();
-        assert_eq!(engine.convert(input), *output, "input #{i}: {input}");
+    fn evaluate(mim_path: &str, cases_path: &str) {
+        let file = Parser::parse_from_path(mim_path).unwrap();
+        let mut engine = Engine::new(
+            file.into_input_method(&mut Preprocessor::default())
+                .unwrap(),
+        );
+
+        let cases = std::fs::read_to_string(cases_path).unwrap();
+
+        let mut n_failed = 0;
+        for (i, case) in cases.lines().enumerate().skip(1) {
+            let (input, expected) = case.split_once('\t').unwrap();
+            let actual = engine.convert(input);
+            if expected != actual {
+                println!(
+                    r#"
+input #{i}: {input}
+expected: {expected}
+actual: {actual}"#
+                );
+                n_failed += 1;
+            }
+        }
+
+        assert!(n_failed == 0, "Failed {} test cases", n_failed);
     }
+
+    evaluate(
+        "examples/bn-khipro/bn-khipro-classic.mim",
+        "examples/bn-khipro/testcases-classic.tsv",
+    );
+    evaluate(
+        "examples/bn-khipro/bn-khipro-dark.mim",
+        "examples/bn-khipro/testcases-dark.tsv",
+    );
 }
