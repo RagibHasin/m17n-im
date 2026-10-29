@@ -297,7 +297,7 @@ impl<W: io::Write> Generator<'_, W> {
             Marker::RelNext(n) => return self.write(format_args!("Marker::RelNext({n})")),
             Marker::Custom(id) => {
                 return self.write(format_args!(
-                    "Marker::Custom({})",
+                    "Marker::Custom(MarkerId::{})",
                     self.marker_ids.variant(*id).to_owned()
                 ));
             }
@@ -329,7 +329,10 @@ impl<W: io::Write> Generator<'_, W> {
                 self.write(')')
             }
             Action::MovePosition(n) => self.write(format_args!("Action::MovePosition({n})")),
-            Action::Mark => self.write("Action::Mark"),
+            Action::Mark(id) => self.write(format_args!(
+                "Action::Mark(MarkerId::{})",
+                self.marker_ids.variant(*id).to_owned()
+            )),
             Action::Show => self.write("Action::Show"),
             Action::Hide => self.write("Action::Hide"),
             Action::PushbackCount(n) => self.write(format_args!("Action::PushbackCount({n})")),

@@ -16,8 +16,12 @@ pub struct EmbeddableInputMethod<MapId: Id, MarkerId: Id, StateId: Id, VarId: Id
     pub initial_state: StateId,
 }
 
-impl<MapId: Id, MarkerId: Id, StateId: Id, VarId: Id> InputMethod
-    for &'static EmbeddableInputMethod<MapId, MarkerId, StateId, VarId>
+impl<
+    MapId: Id,
+    MarkerId: Id + std::hash::Hash + 'static,
+    StateId: Id,
+    VarId: Id + std::hash::Hash + 'static,
+> InputMethod for &'static EmbeddableInputMethod<MapId, MarkerId, StateId, VarId>
 {
     type MapId = MapId;
     type MarkerId = MarkerId;

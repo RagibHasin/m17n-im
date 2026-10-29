@@ -104,7 +104,7 @@ impl From<ast::Action> for Action<Ident, Ident, Ident> {
             ast::Action::DeletePosition(n) => Self::DeletePosition(n),
             ast::Action::MoveMarker(m) => Self::MoveMarker(m),
             ast::Action::MovePosition(n) => Self::MovePosition(n),
-            ast::Action::Mark(_) => Self::Mark,
+            ast::Action::Mark(id) => Self::Mark(id),
             ast::Action::Show => Self::Show,
             ast::Action::Hide => Self::Hide,
             ast::Action::PushbackCount(n) => Self::PushbackCount(n),

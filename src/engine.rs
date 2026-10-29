@@ -8,13 +8,14 @@ use std::collections::HashMap;
 use crate::ir::*;
 
 #[derive(Debug, Clone)]
-struct Snapshot<StateId, VarId> {
+struct Snapshot<MarkerId, StateId, VarId> {
     state: StateId,
     prev_state: Option<StateId>,
     vars: HashMap<VarId, i32>,
     committed: String,
     preedit: Vec<char>,
-    mark: usize,
+    current_pos: usize,
+    marks: HashMap<MarkerId, usize>,
 }
 
 /// The entry point for executing a m17n [`InputMethod`].
@@ -27,8 +28,9 @@ pub struct Engine<IM: InputMethod + 'static> {
     vars: HashMap<IM::VarId, i32>,
     committed: String,
     preedit: Vec<char>,
-    mark: usize,
-    last_snapshot: Option<Snapshot<IM::StateId, IM::VarId>>,
+    current_position: usize,
+    marks: HashMap<IM::MarkerId, usize>,
+    last_snapshot: Option<Snapshot<IM::MarkerId, IM::StateId, IM::VarId>>,
     /// Characters pushed back by `pushback` that still need (re-)matching, in the order
     /// they should be consumed. See module docs for why this can't just be a slice
     /// of the original input.
@@ -36,7 +38,7 @@ pub struct Engine<IM: InputMethod + 'static> {
     unhandled: bool,
 }
 
-impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engine<IM> {
+impl<IM: InputMethod> Engine<IM> {
     /// Instantiates a new [`Engine`] wrapping the given [`InputMethod`].
     pub fn new(input_method: IM) -> Self {
         let initial_state = input_method.initial_state();
@@ -47,7 +49,8 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
             vars: HashMap::new(),
             committed: String::new(),
             preedit: Vec::new(),
-            mark: 0,
+            current_position: 0,
+            marks: HashMap::new(),
             last_snapshot: None,
             requeue: String::new(),
             unhandled: false,
@@ -73,7 +76,7 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
         self.prev_state = None;
         self.vars.clear();
         self.preedit.clear();
-        self.mark = 0;
+        self.current_position = 0;
         self.last_snapshot = None;
         self.requeue.clear();
         self.unhandled = false;
@@ -164,7 +167,7 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
 
         if let Some((rule, len, branch_actions)) = best {
             self.last_snapshot = Some(self.snapshot());
-            self.mark = self.preedit.len();
+            self.current_position = self.preedit.len();
             // Consume the matched text *before* running its actions: a `pushback` inside those
             // actions mutates `self.requeue`, and must not be mistaken for text that was already
             // part of this match (that would either double-consume or -- as it happened in the past
@@ -185,12 +188,14 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
                 .find(|b| matches!(b, Branch::Nil { .. }))
             {
                 self.last_snapshot = Some(self.snapshot());
-                self.mark = self.preedit.len();
+                self.current_position = self.preedit.len();
                 self.exec_all(actions);
+            } else {
+                self.last_snapshot = Some(self.snapshot());
+                self.current_position = self.preedit.len();
+                self.set_state(self.input_method.initial_state());
             }
-            if let Some(c) = passthrough {
-                self.preedit.push(c);
-            }
+            self.requeue.extend(passthrough);
         }
     }
 
@@ -199,27 +204,38 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
         self.preedit.clear();
     }
 
-    fn snapshot(&self) -> Snapshot<IM::StateId, VarId> {
+    fn snapshot(&self) -> Snapshot<IM::MarkerId, IM::StateId, IM::VarId> {
         Snapshot {
             state: self.state,
             prev_state: self.prev_state,
             vars: self.vars.clone(),
             committed: self.committed.clone(),
             preedit: self.preedit.clone(),
-            mark: self.mark,
+            current_pos: self.current_position,
+            marks: self.marks.clone(),
         }
     }
 
-    fn restore(&mut self, s: Snapshot<IM::StateId, VarId>) {
-        self.state = s.state;
-        self.prev_state = s.prev_state;
-        self.vars = s.vars;
-        self.committed = s.committed;
-        self.preedit = s.preedit;
-        self.mark = s.mark;
+    fn restore(&mut self, s: Snapshot<IM::MarkerId, IM::StateId, IM::VarId>) {
+        let Snapshot {
+            state,
+            prev_state,
+            vars,
+            committed,
+            preedit,
+            current_pos: current_position,
+            marks,
+        } = s;
+        self.state = state;
+        self.prev_state = prev_state;
+        self.vars = vars;
+        self.committed = committed;
+        self.preedit = preedit;
+        self.current_position = current_position;
+        self.marks = marks;
     }
 
-    fn exec_all(&mut self, actions: &[Action<IM::MarkerId, IM::StateId, VarId>]) {
+    fn exec_all(&mut self, actions: &[Action<IM::MarkerId, IM::StateId, IM::VarId>]) {
         for a in actions {
             self.exec(a);
             if self.unhandled {
@@ -233,15 +249,17 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
     }
 
     fn delete(&mut self, other: usize) {
-        self.preedit.drain(if other < self.mark {
-            other..self.mark
+        let range = if other < self.current_position {
+            other..self.current_position
         } else {
-            self.mark..other
-        });
-        self.mark = self.mark.min(other);
+            self.current_position..other
+        };
+        self.marks.retain(|_, pos| !range.contains(pos));
+        self.preedit.drain(range);
+        self.current_position = self.current_position.min(other);
     }
 
-    fn eval(&self, x: &Expr<VarId>) -> i32 {
+    fn eval(&self, x: &Expr<IM::VarId>) -> i32 {
         match x {
             Expr::Integer(v) => *v,
             Expr::Variable(name) => self.vars.get(name).copied().unwrap_or(0),
@@ -274,7 +292,7 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
         }
     }
 
-    fn eval_condition(&self, cond: &Condition<VarId>) -> bool {
+    fn eval_condition(&self, cond: &Condition<IM::VarId>) -> bool {
         let left = self.eval(&cond.left);
         match (cond.op, &cond.right) {
             (Some(op), Some(right)) => {
@@ -295,36 +313,47 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
     fn marker_pos(&self, marker: &Marker<IM::MarkerId>) -> usize {
         match marker {
             Marker::Start => 0,
-            Marker::MatchStart => self.mark,
+            Marker::MatchStart => self.current_position,
             Marker::End => self.preedit.len(),
-            Marker::Prev => self.mark.saturating_sub(1),
-            Marker::Next => self.preedit.len().min(self.mark + 1),
-            Marker::RelPrev(r) => self.mark.saturating_sub(*r),
-            Marker::RelNext(r) => self.preedit.len().min(self.mark + *r),
-            Marker::Candidate(_)
-            | Marker::GroupStart
-            | Marker::GroupEnd
-            | Marker::Selected
-            | Marker::Custom(_) => unreachable!("{marker:?} is invalid for delete/move"),
+            Marker::Prev => self.current_position.saturating_sub(1),
+            Marker::Next => self.preedit.len().min(self.current_position + 1),
+            Marker::RelPrev(r) => self.current_position.saturating_sub(*r),
+            Marker::RelNext(r) => self.preedit.len().min(self.current_position + *r),
+            Marker::Custom(id) => self.marks.get(id).copied().unwrap_or(self.current_position),
+            Marker::Candidate(_) | Marker::GroupStart | Marker::GroupEnd | Marker::Selected => {
+                unreachable!("{marker:?} is invalid for delete/move")
+            }
         }
     }
 
-    fn exec(&mut self, action: &Action<IM::MarkerId, IM::StateId, VarId>) {
+    fn exec(&mut self, action: &Action<IM::MarkerId, IM::StateId, IM::VarId>) {
         match action {
             Action::InsertText(s) => {
                 let old_len = self.preedit.len();
-                self.preedit.splice(self.mark..self.mark, s.chars());
-                self.mark += self.preedit.len() - old_len;
+                self.preedit
+                    .splice(self.current_position..self.current_position, s.chars());
+                let n_added = self.preedit.len() - old_len;
+                for pos in self.marks.values_mut() {
+                    if *pos > self.current_position {
+                        *pos += n_added;
+                    }
+                }
+                self.current_position += n_added;
             }
             Action::InsertChar(c) => {
-                self.preedit.insert(self.mark, *c);
-                self.mark += 1;
+                self.preedit.insert(self.current_position, *c);
+                for pos in self.marks.values_mut() {
+                    if *pos > self.current_position {
+                        *pos += 1;
+                    }
+                }
+                self.current_position += 1;
             }
             Action::InsertVariable(id) => {
                 let c = self.vars.get(id).copied().unwrap_or(0);
                 if let Some(c) = char::from_u32(c as _) {
-                    self.preedit.insert(self.mark, c);
-                    self.mark += 1;
+                    self.preedit.insert(self.current_position, c);
+                    self.current_position += 1;
                 }
             }
             Action::InsertCandidates(groups) => {
@@ -340,15 +369,17 @@ impl<IM: InputMethod<VarId = VarId>, VarId: Id + std::hash::Hash + 'static> Engi
             }
             Action::DeleteMarker(m) => self.delete(self.marker_pos(m)),
             Action::DeletePosition(n) => self.delete(self.resolve_pos(*n)),
-            Action::MoveMarker(marker) => self.mark = self.marker_pos(marker),
-            Action::MovePosition(n) => self.mark = self.resolve_pos(*n),
-            Action::Mark => self.mark = self.preedit.len(),
+            Action::MoveMarker(marker) => self.current_position = self.marker_pos(marker),
+            Action::MovePosition(n) => self.current_position = self.resolve_pos(*n),
+            Action::Mark(id) => {
+                self.marks.insert(*id, self.current_position);
+            }
             Action::PushbackCount(n) => {
                 let take = (*n).unsigned_abs() as usize;
                 let start = self.preedit.len().saturating_sub(take);
                 let moved: String = self.preedit.split_off(start).into_iter().collect();
                 self.requeue.insert_str(0, &moved);
-                self.mark = self.mark.min(self.preedit.len());
+                self.current_position = self.current_position.min(self.preedit.len());
             }
             Action::Undo | Action::UndoCount(_) | Action::UndoVariable(_) => {
                 if let Some(s) = self.last_snapshot.take() {

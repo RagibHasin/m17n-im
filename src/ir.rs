@@ -17,13 +17,13 @@ pub trait InputMethod: Debug {
     type MapId: Id;
 
     /// Identifier for the markers.
-    type MarkerId: Id;
+    type MarkerId: Id + std::hash::Hash + 'static;
 
     /// Identifier for the states.
     type StateId: Id;
 
     /// Identifier for the variables.
-    type VarId: Id;
+    type VarId: Id + std::hash::Hash + 'static;
 
     /// Retrieves the [`Map`] with the `id`.
     fn get_map(
@@ -175,7 +175,7 @@ pub enum Action<MarkerId: Id, StateId: Id, VarId: Id> {
 
     /// `(mark NAME)` -- named markers collapse to the single tracked mark
     /// position, same as `@-`; see module docs.
-    Mark,
+    Mark(MarkerId),
 
     Show,
     Hide,

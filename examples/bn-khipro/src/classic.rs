@@ -10,6 +10,7 @@ pub enum MapId {
     Diacritic,
     Slicer,
     Slicer3,
+    Slicer4,
     Slicer2,
     Shor,
     Fkar,
@@ -25,6 +26,9 @@ pub enum MapId {
     UppercaseIdentity,
     DigitsIdentity,
     SymbolsIdentity,
+    SymbolsNoIdentity,
+    Dot,
+    Comma,
 }
 impl Id for MapId {}
 
@@ -36,6 +40,9 @@ impl Id for MarkerId {}
 pub enum StateId {
     Init,
     ShorState,
+    SlashState,
+    DotState,
+    CommaState,
     ByanjonState,
     BlindState,
     JuktobornoState,
@@ -46,13 +53,16 @@ impl Id for StateId {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum VarId {
-    P2CID,
-    PrevCID,
+    CmpdCnstFlag,
+    Fflag,
+    ScndCnstID,
+    PrvCnstID,
     ALTERNATE,
-    PCID,
-    CID,
+    FrstCnstID,
+    CnstID,
     SLICER,
     KAR,
+    Overflow,
 }
 impl Id for VarId {}
 
@@ -110,315 +120,371 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule(
                 "k",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ক"),
                 ],
             ),
             text_rule(
                 "kh",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(2)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(2)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
                     Action::InsertText("খ"),
                 ],
             ),
             text_rule(
                 "g",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(3)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(3)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("গ"),
                 ],
             ),
             text_rule(
                 "gh",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(4)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(4)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
                     Action::InsertText("ঘ"),
                 ],
             ),
             text_rule(
                 "gf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(4)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(4)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঘ"),
                 ],
             ),
             text_rule(
                 "ng",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(5)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(5)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
                     Action::InsertText("ঙ"),
                 ],
             ),
             text_rule(
                 "c",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(6)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(6)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("চ"),
                 ],
             ),
             text_rule(
                 "ch",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(7)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(7)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
                     Action::InsertText("ছ"),
                 ],
             ),
             text_rule(
                 "cf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(7)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(7)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ছ"),
                 ],
             ),
             text_rule(
                 "j",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(8)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(8)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("জ"),
                 ],
             ),
             text_rule(
                 "jh",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(9)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(9)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
                     Action::InsertText("ঝ"),
                 ],
             ),
             text_rule(
                 "jf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(9)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(9)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঝ"),
                 ],
             ),
             text_rule(
                 "nff",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(10)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(10)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঞ"),
                 ],
             ),
             text_rule(
                 "mf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(10)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(10)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঞ"),
                 ],
             ),
             text_rule(
                 "tf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(11)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(11)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ট"),
                 ],
             ),
             text_rule(
                 "tff",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(12)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(12)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঠ"),
                 ],
             ),
             text_rule(
                 "df",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(13)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(13)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ড"),
                 ],
             ),
             text_rule(
                 "dff",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(14)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(14)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঢ"),
                 ],
             ),
             text_rule(
                 "nf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(15)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(15)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ণ"),
                 ],
             ),
             text_rule(
                 "t",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(16)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(16)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ত"),
                 ],
             ),
             text_rule(
                 "th",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(17)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(17)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
                     Action::InsertText("থ"),
                 ],
             ),
             text_rule(
                 "d",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(18)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(18)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("দ"),
                 ],
             ),
             text_rule(
                 "dh",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(19)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(19)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
                     Action::InsertText("ধ"),
                 ],
             ),
             text_rule(
                 "n",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(20)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(20)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ন"),
                 ],
             ),
             text_rule(
                 "p",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(21)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(21)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("প"),
                 ],
             ),
             text_rule(
                 "ph",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(22)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(22)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
                     Action::InsertText("ফ"),
                 ],
             ),
             text_rule(
                 "pf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(22)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(22)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ফ"),
                 ],
             ),
             text_rule(
                 "f",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(189)),
-                    Action::InsertText("⁌"),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(189)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
+                    Action::InsertText("◌"),
                 ],
             ),
             text_rule(
                 "b",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(23)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(23)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ব"),
                 ],
             ),
             text_rule(
                 "bf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(24)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(24)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ভ"),
                 ],
             ),
             text_rule(
                 "v",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(24)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(24)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
                     Action::InsertText("ভ"),
                 ],
             ),
             text_rule(
                 "m",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(25)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(25)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ম"),
                 ],
             ),
             text_rule(
                 "z",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(26)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(26)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("য"),
                 ],
             ),
             text_rule(
                 "r",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(27)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(27)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("র"),
                 ],
             ),
             text_rule(
                 "l",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(28)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(28)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ল"),
                 ],
             ),
             text_rule(
                 "sh",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(29)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(29)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(1)),
                     Action::InsertText("শ"),
                 ],
             ),
             text_rule(
                 "sf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(30)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(30)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ষ"),
                 ],
             ),
             text_rule(
                 "s",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(31)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(31)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("স"),
                 ],
             ),
             text_rule(
                 "h",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(32)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(32)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
                     Action::InsertText("হ"),
                 ],
             ),
             text_rule(
                 "y",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(33)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(33)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("য়"),
                 ],
             ),
             text_rule(
                 "rf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(34)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(34)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ড়"),
                 ],
             ),
             text_rule(
                 "rff",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(35)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(35)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ঢ়"),
                 ],
             ),
             text_rule(
                 ",,",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(36)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(36)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("\u{9bc}"),
                 ],
             ),
             text_rule(
                 "kf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(39)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(39)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("ক\u{9cd}ষ"),
                 ],
             ),
             text_rule(
                 "zf",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(190)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(190)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
                     Action::InsertText("\u{9cd}য"),
                 ],
             ),
@@ -431,14 +497,14 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule(
                 "r",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(27)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(27)),
                     Action::InsertText("র"),
                 ],
             ),
             text_rule(
                 "z",
                 &[
-                    Action::Set(SetCmd::Set, VarId::CID, int(26)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(26)),
                     Action::InsertText("য"),
                 ],
             ),
@@ -535,7 +601,48 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule("9..", &[Action::InsertText("৯।")]),
             text_rule("0..", &[Action::InsertText("০।")]),
         ],
-        event_rules: &[],
+        event_rules: &[
+            event_rule(
+                &[key_event(&[], "KP_0")],
+                &[Action::InsertText("০")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_1")],
+                &[Action::InsertText("১")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_2")],
+                &[Action::InsertText("২")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_3")],
+                &[Action::InsertText("৩")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_4")],
+                &[Action::InsertText("৪")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_5")],
+                &[Action::InsertText("৫")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_6")],
+                &[Action::InsertText("৬")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_7")],
+                &[Action::InsertText("৭")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_8")],
+                &[Action::InsertText("৮")],
+            ),
+            event_rule(
+                &[key_event(&[], "KP_9")],
+                &[Action::InsertText("৯")],
+            ),
+        ],
     },
     Map {
         id: MapId::Diacritic,
@@ -556,14 +663,22 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule(".", &[Action::InsertText("।")]),
             text_rule("..", &[Action::InsertText(".")]),
             text_rule("...", &[Action::InsertText("..")]),
-            text_rule("....", &[Action::InsertText("...")]),
-            text_rule(".....", &[Action::InsertText("....")]),
-            text_rule("......", &[Action::InsertText(".....")]),
-            text_rule(".......", &[Action::InsertText("......")]),
-            text_rule("\\\\", &[Action::InsertText("\\")]),
+            text_rule(
+                "....",
+                &[
+                    Action::Set(SetCmd::Set, VarId::Overflow, int(1)),
+                    Action::InsertText("..."),
+                ],
+            ),
             text_rule("$", &[Action::InsertText("৳")]),
             text_rule("$f", &[Action::InsertText("₹")]),
-            text_rule(",,,", &[Action::InsertText(",,")]),
+            text_rule(
+                ",,,",
+                &[
+                    Action::Set(SetCmd::Set, VarId::Overflow, int(2)),
+                    Action::InsertText(",,"),
+                ],
+            ),
             text_rule(".f", &[Action::InsertText("॥")]),
             text_rule(".ff", &[Action::InsertText("৺")]),
             text_rule("+", &[Action::InsertText("+")]),
@@ -574,6 +689,16 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule("=", &[Action::InsertText("=")]),
             text_rule("=f", &[Action::InsertText("≠")]),
         ],
+        event_rules: &[],
+    },
+    Map {
+        id: MapId::Dot,
+        text_rules: &[text_rule(".", &[Action::InsertText(".")])],
+        event_rules: &[],
+    },
+    Map {
+        id: MapId::Comma,
+        text_rules: &[text_rule(",", &[Action::InsertText(",")])],
         event_rules: &[],
     },
     Map {
@@ -594,6 +719,11 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
     Map {
         id: MapId::Slicer3,
         text_rules: &[text_rule("///", &[Action::InsertText("//")])],
+        event_rules: &[],
+    },
+    Map {
+        id: MapId::Slicer4,
+        text_rules: &[text_rule("////", &[Action::InsertText("///")])],
         event_rules: &[],
     },
     Map {
@@ -690,7 +820,6 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule("!", &[Action::InsertText("!")]),
             text_rule("@", &[Action::InsertText("@")]),
             text_rule("#", &[Action::InsertText("#")]),
-            text_rule("$", &[Action::InsertText("$")]),
             text_rule("%", &[Action::InsertText("%")]),
             text_rule("^", &[Action::InsertText("^")]),
             text_rule("&", &[Action::InsertText("&")]),
@@ -705,6 +834,7 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule("]", &[Action::InsertText("]")]),
             text_rule("{", &[Action::InsertText("{")]),
             text_rule("}", &[Action::InsertText("}")]),
+            text_rule(";;", &[Action::InsertText(";")]),
             text_rule(":", &[Action::InsertText(":")]),
             text_rule("'", &[Action::InsertText("'")]),
             text_rule("\"", &[Action::InsertText("\"")]),
@@ -713,17 +843,23 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
             text_rule("<", &[Action::InsertText("<")]),
             text_rule(">", &[Action::InsertText(">")]),
             text_rule("/", &[Action::InsertText("/")]),
-            text_rule("?", &[Action::InsertText("?")]),
             text_rule("`", &[Action::InsertText("`")]),
             text_rule("~", &[Action::InsertText("~")]),
-            text_rule("\\", &[Action::InsertText("\\")]),
             text_rule("|", &[Action::InsertText("|")]),
         ],
         event_rules: &[],
     },
     Map {
+        id: MapId::SymbolsNoIdentity,
+        text_rules: &[text_rule("$", &[Action::InsertText("$")])],
+        event_rules: &[],
+    },
+    Map {
         id: MapId::Blinder,
-        text_rules: &[text_rule("\\", &[Action::InsertText("\\")])],
+        text_rules: &[
+            text_rule("\\", &[Action::InsertText("\\")]),
+            text_rule("?", &[Action::InsertText("?")]),
+        ],
         event_rules: &[],
     },
 ];
@@ -734,11 +870,13 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
         branches: &[
             Branch::Init {
                 actions: &[
-                    Action::Set(SetCmd::Set, VarId::P2CID, int(0)),
-                    Action::Set(SetCmd::Set, VarId::PrevCID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
+                    Action::Set(SetCmd::Set, VarId::ScndCnstID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, int(0)),
                     Action::Set(SetCmd::Set, VarId::ALTERNATE, int(0)),
-                    Action::Set(SetCmd::Set, VarId::PCID, int(0)),
-                    Action::Set(SetCmd::Set, VarId::CID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(0)),
                     Action::Set(SetCmd::Set, VarId::SLICER, int(0)),
                     Action::Set(SetCmd::Set, VarId::KAR, int(0)),
                 ],
@@ -757,6 +895,13 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             Branch::Map {
                 map: MapId::Slicer3,
                 actions: &[Action::Commit],
+            },
+            Branch::Map {
+                map: MapId::Slicer4,
+                actions: &[
+                    Action::Commit,
+                    Action::Shift(StateId::SlashState),
+                ],
             },
             Branch::Map {
                 map: MapId::Slicer2,
@@ -787,16 +932,29 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::Biram,
-                actions: &[Action::Shift(StateId::ShorState)],
+                actions: &[Action::Cond(&[
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(1)]),
+                        actions: &[Action::Shift(StateId::DotState)],
+                    },
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(2)]),
+                        actions: &[Action::Shift(StateId::CommaState)],
+                    },
+                    CondClause {
+                        test: int(1),
+                        actions: &[Action::Shift(StateId::Init)],
+                    },
+                ])],
             },
             Branch::Map {
                 map: MapId::Byanjon,
                 actions: &[
-                    Action::Set(SetCmd::Set, VarId::PrevCID, var(VarId::PCID)),
-                    Action::Set(SetCmd::Set, VarId::PCID, var(VarId::CID)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, var(VarId::FrstCnstID)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::CnstID)),
                     Action::Shift(StateId::ByanjonState),
                     Action::Cond(&[CondClause {
-                        test: op(Eq, &[var(VarId::CID), int(0)]),
+                        test: op(Eq, &[var(VarId::CnstID), int(0)]),
                         actions: &[Action::Shift(StateId::Init)],
                     }]),
                 ],
@@ -805,6 +963,10 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                 map: MapId::Blinder,
                 actions: &[Action::Shift(StateId::BlindState)],
             },
+            Branch::Map {
+                map: MapId::Backspace,
+                actions: &[],
+            },
         ],
     },
     State {
@@ -812,11 +974,13 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
         branches: &[
             Branch::Init {
                 actions: &[
-                    Action::Set(SetCmd::Set, VarId::P2CID, int(0)),
-                    Action::Set(SetCmd::Set, VarId::PrevCID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::CmpdCnstFlag, int(0)),
+                    Action::Set(SetCmd::Set, VarId::Fflag, int(0)),
+                    Action::Set(SetCmd::Set, VarId::ScndCnstID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, int(0)),
                     Action::Set(SetCmd::Set, VarId::ALTERNATE, int(0)),
-                    Action::Set(SetCmd::Set, VarId::PCID, int(0)),
-                    Action::Set(SetCmd::Set, VarId::CID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(0)),
+                    Action::Set(SetCmd::Set, VarId::CnstID, int(0)),
                     Action::Set(SetCmd::Set, VarId::SLICER, int(0)),
                     Action::Set(SetCmd::Set, VarId::KAR, int(0)),
                 ],
@@ -841,6 +1005,10 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                 actions: &[Action::Shift(StateId::Init)],
             },
             Branch::Map {
+                map: MapId::Slicer4,
+                actions: &[Action::Shift(StateId::SlashState)],
+            },
+            Branch::Map {
                 map: MapId::Shor,
                 actions: &[],
             },
@@ -850,7 +1018,20 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::Biram,
-                actions: &[],
+                actions: &[Action::Cond(&[
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(1)]),
+                        actions: &[Action::Shift(StateId::DotState)],
+                    },
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(2)]),
+                        actions: &[Action::Shift(StateId::CommaState)],
+                    },
+                    CondClause {
+                        test: int(1),
+                        actions: &[Action::Shift(StateId::Init)],
+                    },
+                ])],
             },
             Branch::Map {
                 map: MapId::Prithayok,
@@ -866,11 +1047,11 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             Branch::Map {
                 map: MapId::Byanjon,
                 actions: &[
-                    Action::Set(SetCmd::Set, VarId::PrevCID, var(VarId::PCID)),
-                    Action::Set(SetCmd::Set, VarId::PCID, var(VarId::CID)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, var(VarId::FrstCnstID)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::CnstID)),
                     Action::Shift(StateId::ByanjonState),
                     Action::Cond(&[CondClause {
-                        test: op(Eq, &[var(VarId::CID), int(0)]),
+                        test: op(Eq, &[var(VarId::CnstID), int(0)]),
                         actions: &[Action::Shift(StateId::Init)],
                     }]),
                 ],
@@ -901,7 +1082,20 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::Biram,
-                actions: &[Action::Shift(StateId::ShorState)],
+                actions: &[Action::Cond(&[
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(1)]),
+                        actions: &[Action::Shift(StateId::DotState)],
+                    },
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(2)]),
+                        actions: &[Action::Shift(StateId::CommaState)],
+                    },
+                    CondClause {
+                        test: int(1),
+                        actions: &[Action::Shift(StateId::Init)],
+                    },
+                ])],
             },
             Branch::Map {
                 map: MapId::Kar,
@@ -913,8 +1107,8 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 op(
                                     Or,
                                     &[
-                                        op(Eq, &[var(VarId::PCID), int(27)]),
-                                        op(Eq, &[var(VarId::PCID), int(187)]),
+                                        op(Eq, &[var(VarId::FrstCnstID), int(27)]),
+                                        op(Eq, &[var(VarId::FrstCnstID), int(187)]),
                                     ],
                                 ),
                                 op(Eq, &[var(VarId::KAR), int(1)]),
@@ -940,15 +1134,15 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             test: op(
                                 And,
                                 &[
-                                    op(Eq, &[var(VarId::PCID), int(27)]),
-                                    op(Eq, &[var(VarId::CID), int(26)]),
+                                    op(Eq, &[var(VarId::FrstCnstID), int(27)]),
+                                    op(Eq, &[var(VarId::CnstID), int(26)]),
                                 ],
                             ),
                             actions: &[
                                 Action::DeleteMarker(Marker::Prev),
                                 Action::DeleteMarker(Marker::Prev),
-                                Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                Action::Set(SetCmd::Set, VarId::CID, int(37)),
+                                Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                Action::Set(SetCmd::Set, VarId::CnstID, int(37)),
                                 Action::InsertText("র\u{200d}\u{9cd}য"),
                                 Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                 Action::Shift(StateId::JuktobornoState),
@@ -958,8 +1152,8 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             test: op(
                                 And,
                                 &[
-                                    op(Eq, &[var(VarId::PCID), int(187)]),
-                                    op(Eq, &[var(VarId::CID), int(26)]),
+                                    op(Eq, &[var(VarId::FrstCnstID), int(187)]),
+                                    op(Eq, &[var(VarId::CnstID), int(26)]),
                                 ],
                             ),
                             actions: &[
@@ -974,8 +1168,8 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             test: op(
                                 And,
                                 &[
-                                    op(Eq, &[var(VarId::PCID), int(33)]),
-                                    op(Eq, &[var(VarId::CID), int(27)]),
+                                    op(Eq, &[var(VarId::FrstCnstID), int(33)]),
+                                    op(Eq, &[var(VarId::CnstID), int(27)]),
                                 ],
                             ),
                             actions: &[],
@@ -984,14 +1178,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             test: op(
                                 And,
                                 &[
-                                    op(Eq, &[var(VarId::PCID), int(187)]),
-                                    op(Eq, &[var(VarId::CID), int(27)]),
+                                    op(Eq, &[var(VarId::FrstCnstID), int(187)]),
+                                    op(Eq, &[var(VarId::CnstID), int(27)]),
                                 ],
                             ),
                             actions: &[
                                 Action::DeleteMarker(Marker::RelPrev(3)),
                                 Action::InsertText("র\u{9cd}র"),
-                                Action::Set(SetCmd::Set, VarId::CID, int(191)),
+                                Action::Set(SetCmd::Set, VarId::CnstID, int(191)),
                                 Action::Shift(StateId::JuktobornoState),
                             ],
                         },
@@ -999,13 +1193,13 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             test: op(
                                 And,
                                 &[
-                                    op(Eq, &[var(VarId::PCID), int(27)]),
-                                    op(Eq, &[var(VarId::CID), int(27)]),
+                                    op(Eq, &[var(VarId::FrstCnstID), int(27)]),
+                                    op(Eq, &[var(VarId::CnstID), int(27)]),
                                 ],
                             ),
                             actions: &[
                                 Action::Shift(StateId::RrState),
-                                Action::Set(SetCmd::Set, VarId::CID, int(187)),
+                                Action::Set(SetCmd::Set, VarId::CnstID, int(187)),
                             ],
                         },
                         CondClause {
@@ -1014,14 +1208,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 Action::MoveMarker(Marker::Prev),
                                 Action::InsertChar('\u{9cd}'),
                                 Action::MoveMarker(Marker::End),
-                                Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
+                                Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
                                 Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                 Action::Shift(StateId::JuktobornoState),
                             ],
                         },
                     ]),
-                    Action::Set(SetCmd::Set, VarId::PrevCID, var(VarId::PCID)),
-                    Action::Set(SetCmd::Set, VarId::PCID, var(VarId::CID)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, var(VarId::FrstCnstID)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::CnstID)),
                 ],
             },
             Branch::Map {
@@ -1029,14 +1223,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                 actions: &[
                     Action::Cond(&[
                         CondClause {
-                            test: op(Eq, &[var(VarId::CID), int(0)]),
+                            test: op(Eq, &[var(VarId::CnstID), int(0)]),
                             actions: &[Action::Shift(StateId::Init)],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(187)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(187)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(39)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(39)]),
                                     actions: &[
                                         Action::MoveMarker(Marker::Prev),
                                         Action::MoveMarker(Marker::Prev),
@@ -1044,25 +1238,25 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                         Action::DeleteMarker(Marker::Prev),
                                         Action::InsertText("\u{9cd}"),
                                         Action::MoveMarker(Marker::End),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(4)),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(34)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(34)),
                                         Action::InsertText("ড়"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(187)]),
-                                    actions: &[Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID))],
+                                    test: op(Eq, &[var(VarId::CnstID), int(187)]),
+                                    actions: &[Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID))],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(190)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(190)]),
                                     actions: &[
                                         Action::MoveMarker(Marker::Prev),
                                         Action::MoveMarker(Marker::Prev),
@@ -1078,32 +1272,32 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                         Action::DeleteMarker(Marker::Prev),
                                         Action::InsertText("\u{9cd}"),
                                         Action::MoveMarker(Marker::End),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(1)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(1)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(1)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(1)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(38)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(38)),
                                         Action::InsertText("ক\u{9cd}ক"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(2)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(2)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(39)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(39)),
                                         Action::InsertText("ক\u{9cd}ষ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(1)),
@@ -1111,111 +1305,111 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(40)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(40)),
                                         Action::InsertText("ক\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(16)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(16)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(41)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(41)),
                                         Action::InsertText("ক\u{9cd}ত"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(42)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(42)),
                                         Action::InsertText("ক\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(43)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(43)),
                                         Action::InsertText("ক\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(30)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(30)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(39)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(39)),
                                         Action::InsertText("ক\u{9cd}ষ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(44)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(44)),
                                         Action::InsertText("ক\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(31)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(31)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(45)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(45)),
                                         Action::InsertText("ক\u{9cd}স"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(39)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(39)),
                                         Action::InsertText("ক\u{9cd}ষ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(2)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(2)),
                                         Action::InsertText("খ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(3)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(3)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(3)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(3)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(65)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(65)),
                                         Action::InsertText("জ\u{9cd}ঞ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(2)),
@@ -1223,99 +1417,100 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(46)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(46)),
                                         Action::InsertText("গ\u{9cd}\u{200c}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(19)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(19)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(47)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(47)),
                                         Action::InsertText("গ\u{9cd}ধ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(48)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(48)),
                                         Action::InsertText("গ\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(49)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(49)),
                                         Action::InsertText("গ\u{9cd}\u{200c}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(50)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(50)),
                                         Action::InsertText("গ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(51)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(51)),
                                         Action::InsertText("গ\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(4)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(4)),
+                                        Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
                                         Action::InsertText("ঘ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(4)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(4)),
                                         Action::InsertText("ঘ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(4)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(4)]),
                             actions: &[Action::Cond(&[CondClause {
-                                test: op(Eq, &[var(VarId::CID), int(20)]),
+                                test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
-                                    Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                    Action::Set(SetCmd::Set, VarId::CID, int(52)),
+                                    Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                    Action::Set(SetCmd::Set, VarId::CnstID, int(52)),
                                     Action::InsertText("ঘ\u{9cd}ন"),
                                     Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                     Action::Shift(StateId::JuktobornoState),
@@ -1323,69 +1518,69 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             }])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(5)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(5)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(1)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(1)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(53)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(53)),
                                         Action::InsertText("ঙ\u{9cd}ক"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(2)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(2)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(54)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(54)),
                                         Action::InsertText("ঙ\u{9cd}খ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(3)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(3)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(55)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(55)),
                                         Action::InsertText("ঙ\u{9cd}গ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(4)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(4)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(56)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(56)),
                                         Action::InsertText("ঙ\u{9cd}ঘ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(57)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(57)),
                                         Action::InsertText("ঙ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(39)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(39)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(58)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(58)),
                                         Action::InsertText("ঙ\u{9cd}ক\u{9cd}ষ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(4)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -1394,181 +1589,183 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(6)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(6)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(6)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(6)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(59)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(59)),
                                         Action::InsertText("চ\u{9cd}চ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(7)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(7)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(60)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(60)),
                                         Action::InsertText("চ\u{9cd}ছ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(10)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(10)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(61)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(61)),
                                         Action::InsertText("চ\u{9cd}ঞ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(62)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(62)),
                                         Action::InsertText("চ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(7)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(7)),
+                                        Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
                                         Action::InsertText("ছ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(7)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(7)),
                                         Action::InsertText("ছ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(8)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(8)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(8)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(8)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(63)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(63)),
                                         Action::InsertText("জ\u{9cd}জ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(9)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(9)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(64)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(64)),
                                         Action::InsertText("জ\u{9cd}ঝ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(10)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(10)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(65)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(65)),
                                         Action::InsertText("জ\u{9cd}ঞ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(66)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(66)),
                                         Action::InsertText("জ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(9)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(9)),
+                                        Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
                                         Action::InsertText("ঝ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(9)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(9)),
                                         Action::InsertText("ঝ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(10)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(10)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(6)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(6)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(67)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(67)),
                                         Action::InsertText("ঞ\u{9cd}চ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(7)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(7)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(68)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(68)),
                                         Action::InsertText("ঞ\u{9cd}ছ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(8)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(8)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(69)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(69)),
                                         Action::InsertText("ঞ\u{9cd}জ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(9)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(9)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(70)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(70)),
                                         Action::InsertText("ঞ\u{9cd}ঝ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -1577,152 +1774,152 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(11)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(11)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(71)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(71)),
                                         Action::InsertText("ট\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(72)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(72)),
                                         Action::InsertText("ট\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(73)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(73)),
                                         Action::InsertText("ট\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(12)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(12)),
                                         Action::InsertText("ঠ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(13)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(13)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(13)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(13)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(74)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(74)),
                                         Action::InsertText("ড\u{9cd}ড"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(75)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(75)),
                                         Action::InsertText("ড\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(14)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(14)),
                                         Action::InsertText("ঢ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(15)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(15)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(77)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(77)),
                                         Action::InsertText("ণ\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(12)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(12)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(78)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(78)),
                                         Action::InsertText("ণ\u{9cd}ঠ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(13)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(13)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(79)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(79)),
                                         Action::InsertText("ণ\u{9cd}ড"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(14)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(14)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(80)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(80)),
                                         Action::InsertText("ণ\u{9cd}ঢ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(81)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(81)),
                                         Action::InsertText("ণ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(81)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(81)),
                                         Action::InsertText("ণ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(3)),
@@ -1730,47 +1927,47 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(82)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(82)),
                                         Action::InsertText("ণ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(83)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(83)),
                                         Action::InsertText("ণ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(10)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(10)),
                                         Action::InsertText("ঞ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(16)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(16)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(71)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(71)),
                                         Action::InsertText("ট\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(4)),
@@ -1778,88 +1975,88 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(16)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(16)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(84)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(84)),
                                         Action::InsertText("ত\u{9cd}ত"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(17)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(17)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(85)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(85)),
                                         Action::InsertText("ত\u{9cd}থ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(86)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(86)),
                                         Action::InsertText("ত\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(87)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(87)),
                                         Action::InsertText("ত\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(88)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(88)),
                                         Action::InsertText("ত\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(11)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(11)),
                                         Action::InsertText("ট"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(17)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(17)),
                                         Action::InsertText("থ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(17)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(17)]),
                             actions: &[Action::Cond(&[CondClause {
-                                test: op(Eq, &[var(VarId::CID), int(23)]),
+                                test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
-                                    Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                    Action::Set(SetCmd::Set, VarId::CID, int(89)),
+                                    Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                    Action::Set(SetCmd::Set, VarId::CnstID, int(89)),
                                     Action::InsertText("থ\u{9cd}ব"),
                                     Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                     Action::Shift(StateId::JuktobornoState),
@@ -1867,36 +2064,36 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             }])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(18)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(18)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(3)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(3)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(90)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(90)),
                                         Action::InsertText("দ\u{9cd}\u{200c}গ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(4)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(4)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(91)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(91)),
                                         Action::InsertText("দ\u{9cd}\u{200c}ঘ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(13)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(13)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(74)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(74)),
                                         Action::InsertText("ড\u{9cd}ড"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(5)),
@@ -1904,111 +2101,111 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(18)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(18)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(92)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(92)),
                                         Action::InsertText("দ\u{9cd}দ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(19)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(19)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(93)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(93)),
                                         Action::InsertText("দ\u{9cd}ধ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(94)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(94)),
                                         Action::InsertText("দ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(24)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(24)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(95)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(95)),
                                         Action::InsertText("দ\u{9cd}ভ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(96)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(96)),
                                         Action::InsertText("দ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(13)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(13)),
                                         Action::InsertText("ড"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(19)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(19)),
                                         Action::InsertText("ধ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(19)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(19)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(97)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(97)),
                                         Action::InsertText("ধ\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(98)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(98)),
                                         Action::InsertText("ধ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(99)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(99)),
                                         Action::InsertText("ধ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -2017,14 +2214,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(20)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(20)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(6)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(6)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(67)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(67)),
                                         Action::InsertText("ঞ\u{9cd}চ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(6)),
@@ -2032,11 +2229,11 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(7)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(7)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(68)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(68)),
                                         Action::InsertText("ঞ\u{9cd}ছ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(7)),
@@ -2044,11 +2241,11 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(8)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(8)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(69)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(69)),
                                         Action::InsertText("ঞ\u{9cd}জ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(8)),
@@ -2056,11 +2253,11 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(9)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(9)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(70)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(70)),
                                         Action::InsertText("ঞ\u{9cd}ঝ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(9)),
@@ -2068,44 +2265,44 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(100)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(100)),
                                         Action::InsertText("ন\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(12)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(12)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(101)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(101)),
                                         Action::InsertText("ন\u{9cd}ঠ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(13)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(13)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(102)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(102)),
                                         Action::InsertText("ন\u{9cd}ড"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(81)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(81)),
                                         Action::InsertText("ণ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(10)),
@@ -2113,210 +2310,211 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(16)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(16)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(103)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(103)),
                                         Action::InsertText("ন\u{9cd}ত"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(17)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(17)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(104)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(104)),
                                         Action::InsertText("ন\u{9cd}থ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(18)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(18)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(105)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(105)),
                                         Action::InsertText("ন\u{9cd}দ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(19)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(19)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(106)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(106)),
                                         Action::InsertText("ন\u{9cd}ধ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(107)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(107)),
                                         Action::InsertText("ন\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(108)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(108)),
                                         Action::InsertText("ন\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(109)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(109)),
                                         Action::InsertText("ন\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(31)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(31)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(110)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(110)),
                                         Action::InsertText("ন\u{9cd}স"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(15)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(15)),
                                         Action::InsertText("ণ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(3)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(3)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(5)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(5)),
                                         Action::InsertText("ঙ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(21)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(21)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(111)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(111)),
                                         Action::InsertText("প\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(16)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(16)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(112)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(112)),
                                         Action::InsertText("প\u{9cd}ত"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(113)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(113)),
                                         Action::InsertText("প\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(21)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(21)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(114)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(114)),
                                         Action::InsertText("প\u{9cd}প"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(115)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(115)),
                                         Action::InsertText("প\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(31)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(31)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(116)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(116)),
                                         Action::InsertText("প\u{9cd}স"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(22)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(22)),
+                                        Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
                                         Action::InsertText("ফ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(22)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(22)),
                                         Action::InsertText("ফ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(22)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(22)]),
                             actions: &[Action::Cond(&[CondClause {
-                                test: op(Eq, &[var(VarId::CID), int(28)]),
+                                test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
-                                    Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                    Action::Set(SetCmd::Set, VarId::CID, int(117)),
+                                    Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                    Action::Set(SetCmd::Set, VarId::CnstID, int(117)),
                                     Action::InsertText("ফ\u{9cd}ল"),
                                     Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                     Action::Shift(StateId::JuktobornoState),
@@ -2324,94 +2522,95 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             }])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(23)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(23)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(8)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(8)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(118)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(118)),
                                         Action::InsertText("ব\u{9cd}জ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(18)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(18)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(119)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(119)),
                                         Action::InsertText("ব\u{9cd}দ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(19)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(19)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(120)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(120)),
                                         Action::InsertText("ব\u{9cd}ধ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(121)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(121)),
                                         Action::InsertText("ব\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(122)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(122)),
                                         Action::InsertText("ব\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(24)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(24)),
+                                        Action::Set(SetCmd::Set, VarId::Fflag, int(1)),
                                         Action::InsertText("ভ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(24)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(24)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(123)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(123)),
                                         Action::InsertText("ভ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(124)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(124)),
                                         Action::InsertText("ভ\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -2420,204 +2619,204 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(25)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(25)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(125)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(125)),
                                         Action::InsertText("ম\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(21)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(21)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(126)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(126)),
                                         Action::InsertText("ম\u{9cd}প"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(22)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(22)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(127)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(127)),
                                         Action::InsertText("ম\u{9cd}ফ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(128)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(128)),
                                         Action::InsertText("ম\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(24)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(24)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(129)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(129)),
                                         Action::InsertText("ম\u{9cd}ভ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(130)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(130)),
                                         Action::InsertText("ম\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(131)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(131)),
                                         Action::InsertText("ম\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(10)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(10)),
                                         Action::InsertText("ঞ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(28)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(28)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(1)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(1)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(132)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(132)),
                                         Action::InsertText("ল\u{9cd}ক"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(3)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(3)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(133)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(133)),
                                         Action::InsertText("ল\u{9cd}গ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(134)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(134)),
                                         Action::InsertText("ল\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(13)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(13)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(135)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(135)),
                                         Action::InsertText("ল\u{9cd}ড"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(21)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(21)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(136)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(136)),
                                         Action::InsertText("ল\u{9cd}প"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(22)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(22)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(137)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(137)),
                                         Action::InsertText("ল\u{9cd}ফ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(138)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(138)),
                                         Action::InsertText("ল\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(24)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(24)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(139)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(139)),
                                         Action::InsertText("ল\u{9cd}\u{200c}ভ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(140)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(140)),
                                         Action::InsertText("ল\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(141)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(141)),
                                         Action::InsertText("ল\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -2626,69 +2825,69 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(29)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(29)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(6)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(6)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(142)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(142)),
                                         Action::InsertText("শ\u{9cd}চ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(7)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(7)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(143)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(143)),
                                         Action::InsertText("শ\u{9cd}ছ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(144)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(144)),
                                         Action::InsertText("শ\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(145)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(145)),
                                         Action::InsertText("শ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(146)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(146)),
                                         Action::InsertText("শ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(147)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(147)),
                                         Action::InsertText("শ\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -2697,58 +2896,58 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(30)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(30)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(1)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(1)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(148)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(148)),
                                         Action::InsertText("ষ\u{9cd}ক"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(149)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(149)),
                                         Action::InsertText("ষ\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(12)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(12)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(150)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(150)),
                                         Action::InsertText("ষ\u{9cd}ঠ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(151)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(151)),
                                         Action::InsertText("ষ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(151)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(151)),
                                         Action::InsertText("ষ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(11)),
@@ -2756,44 +2955,44 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(21)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(21)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(152)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(152)),
                                         Action::InsertText("ষ\u{9cd}প"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(22)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(22)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(153)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(153)),
                                         Action::InsertText("ষ\u{9cd}ফ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(154)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(154)),
                                         Action::InsertText("ষ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(155)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(155)),
                                         Action::InsertText("ষ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -2802,202 +3001,202 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(31)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(31)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(1)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(1)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(156)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(156)),
                                         Action::InsertText("স\u{9cd}ক"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(2)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(2)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(157)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(157)),
                                         Action::InsertText("স\u{9cd}খ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(158)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(158)),
                                         Action::InsertText("স\u{9cd}ট"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(16)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(16)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(159)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(159)),
                                         Action::InsertText("স\u{9cd}ত"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(17)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(17)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(160)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(160)),
                                         Action::InsertText("স\u{9cd}থ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(161)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(161)),
                                         Action::InsertText("স\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(21)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(21)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(162)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(162)),
                                         Action::InsertText("স\u{9cd}প"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(22)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(22)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(163)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(163)),
                                         Action::InsertText("স\u{9cd}ফ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(164)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(164)),
                                         Action::InsertText("স\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(165)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(165)),
                                         Action::InsertText("স\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(166)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(166)),
                                         Action::InsertText("স\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(30)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(30)),
                                         Action::InsertText("ষ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(32)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(32)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(29)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(29)),
                                         Action::InsertText("শ"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(32)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(32)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(168)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(168)),
                                         Action::InsertText("হ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(167)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(167)),
                                         Action::InsertText("হ\u{9cd}ন"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(169)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(169)),
                                         Action::InsertText("হ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(170)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(170)),
                                         Action::InsertText("হ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(171)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(171)),
                                         Action::InsertText("হ\u{9cd}ল"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -3006,50 +3205,50 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(34)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(34)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(3)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(3)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(76)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(76)),
                                         Action::InsertText("ড়\u{9cd}\u{200c}গ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(2)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(35)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(35)),
                                         Action::InsertText("ঢ়"),
                                     ],
                                 },
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(39)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(39)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(172)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(172)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(172)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(172)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ণ"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(11)),
@@ -3057,22 +3256,22 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(173)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(173)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ব"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(174)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(174)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ম"),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::Shift(StateId::JuktobornoState),
@@ -3081,19 +3280,19 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(27)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(27)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(189)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(189)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(2)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(34)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(34)),
                                         Action::InsertText("ড়"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(190)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(190)]),
                                     actions: &[
                                         Action::MoveMarker(Marker::Prev),
                                         Action::MoveMarker(Marker::Prev),
@@ -3105,37 +3304,37 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                     ]),
-                    Action::Set(SetCmd::Set, VarId::PrevCID, var(VarId::PCID)),
-                    Action::Set(SetCmd::Set, VarId::PCID, var(VarId::CID)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, var(VarId::FrstCnstID)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::CnstID)),
                 ],
             },
             Branch::Map {
                 map: MapId::Slicer,
                 actions: &[Action::Cond(&[
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(16)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(16)]),
                         actions: &[
                             Action::DeleteMarker(Marker::RelPrev(2)),
                             Action::InsertText("ৎ"),
-                            Action::Set(SetCmd::Set, VarId::PCID, int(188)),
+                            Action::Set(SetCmd::Set, VarId::FrstCnstID, int(188)),
                             Action::Shift(StateId::Init),
                         ],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(2)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(2)]),
                         actions: &[Action::Cond(&[
                             CondClause {
                                 test: op(
                                     Or,
                                     &[
-                                        op(Eq, &[var(VarId::PrevCID), int(28)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(30)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(28)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(30)]),
                                     ],
                                 ),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}কহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
@@ -3143,44 +3342,50 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("কহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                         ])],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(4)]),
+                        test: op(
+                            And,
+                            &[
+                                op(Eq, &[var(VarId::FrstCnstID), int(4)]),
+                                op(Eq, &[var(VarId::Fflag), int(0)]),
+                            ],
+                        ),
                         actions: &[Action::Cond(&[
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(3)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(3)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(3)),
                                     Action::InsertText("জ\u{9cd}ঞহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(28)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(28)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}গহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(34)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(34)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}\u{200c}গহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(65)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(65)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(5)),
                                     Action::InsertText("গ\u{9cd}\u{200c}গহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
@@ -3188,49 +3393,49 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("গহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                         ])],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(5)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(5)]),
                         actions: &[Action::Cond(&[
                             CondClause {
                                 test: op(
                                     Or,
                                     &[
-                                        op(Eq, &[var(VarId::PrevCID), int(3)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(4)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(16)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(19)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(20)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(21)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(25)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(29)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(31)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(32)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(3)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(4)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(16)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(19)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(20)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(21)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(25)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(29)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(31)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(32)]),
                                     ],
                                 ),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}নগ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(3)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(3)),
                                 ],
                             },
                             CondClause {
                                 test: op(
                                     Or,
                                     &[
-                                        op(Eq, &[var(VarId::PrevCID), int(15)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(30)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(39)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(15)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(30)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(39)]),
                                     ],
                                 ),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}ণগ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(3)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(3)),
                                 ],
                             },
                             CondClause {
@@ -3238,28 +3443,40 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("নগ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(3)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(3)),
                                 ],
                             },
                         ])],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(7)]),
+                        test: op(
+                            And,
+                            &[
+                                op(Eq, &[var(VarId::FrstCnstID), int(7)]),
+                                op(Eq, &[var(VarId::Fflag), int(0)]),
+                            ],
+                        ),
                         actions: &[
                             Action::DeleteMarker(Marker::RelPrev(2)),
                             Action::InsertText("চহ"),
-                            Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                            Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                         ],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(9)]),
+                        test: op(
+                            And,
+                            &[
+                                op(Eq, &[var(VarId::FrstCnstID), int(9)]),
+                                op(Eq, &[var(VarId::Fflag), int(0)]),
+                            ],
+                        ),
                         actions: &[Action::Cond(&[
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(23)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(23)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}জহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
@@ -3267,34 +3484,34 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("জহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                         ])],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(17)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(17)]),
                         actions: &[Action::Cond(&[
                             CondClause {
                                 test: op(
                                     Or,
                                     &[
-                                        op(Eq, &[var(VarId::PrevCID), int(1)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(21)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(1)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(21)]),
                                     ],
                                 ),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}তহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(53)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(53)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(5)),
                                     Action::InsertText("ঙ\u{9cd}\u{200c}ক\u{9cd}তহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
@@ -3302,28 +3519,34 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("তহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                         ])],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(19)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(19)]),
                         actions: &[
                             Action::DeleteMarker(Marker::RelPrev(2)),
                             Action::InsertText("দহ"),
-                            Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                            Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                         ],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(22)]),
+                        test: op(
+                            And,
+                            &[
+                                op(Eq, &[var(VarId::FrstCnstID), int(22)]),
+                                op(Eq, &[var(VarId::Fflag), int(0)]),
+                            ],
+                        ),
                         actions: &[Action::Cond(&[
                             CondClause {
-                                test: op(Eq, &[var(VarId::PrevCID), int(21)]),
+                                test: op(Eq, &[var(VarId::PrvCnstID), int(21)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}পহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
@@ -3331,27 +3554,27 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("পহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                         ])],
                     },
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(29)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(29)]),
                         actions: &[Action::Cond(&[
                             CondClause {
                                 test: op(
                                     Or,
                                     &[
-                                        op(Eq, &[var(VarId::PrevCID), int(1)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(20)]),
-                                        op(Eq, &[var(VarId::PrevCID), int(21)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(1)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(20)]),
+                                        op(Eq, &[var(VarId::PrvCnstID), int(21)]),
                                     ],
                                 ),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("\u{9cd}সহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                             CondClause {
@@ -3359,7 +3582,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(2)),
                                     Action::InsertText("সহ"),
-                                    Action::Set(SetCmd::Set, VarId::PCID, int(32)),
+                                    Action::Set(SetCmd::Set, VarId::FrstCnstID, int(32)),
                                 ],
                             },
                         ])],
@@ -3374,14 +3597,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                 map: MapId::Slicer2,
                 actions: &[Action::Cond(&[
                     CondClause {
-                        test: op(Eq, &[var(VarId::PCID), int(16)]),
+                        test: op(Eq, &[var(VarId::FrstCnstID), int(16)]),
                         actions: &[
                             Action::DeleteMarker(Marker::RelPrev(2)),
                             Action::InsertText("ত/"),
                         ],
                     },
                     CondClause {
-                        test: int(1),
+                        test: op(Eq, &[var(VarId::CmpdCnstFlag), int(0)]),
                         actions: &[
                             Action::DeleteMarker(Marker::Prev),
                             Action::InsertText("\u{981}"),
@@ -3392,7 +3615,48 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::Slicer3,
-                actions: &[Action::Shift(StateId::Init)],
+                actions: &[Action::Cond(&[
+                    CondClause {
+                        test: op(
+                            Or,
+                            &[
+                                op(Eq, &[var(VarId::CmpdCnstFlag), int(1)]),
+                                op(Eq, &[var(VarId::FrstCnstID), int(16)]),
+                            ],
+                        ),
+                        actions: &[
+                            Action::DeleteMarker(Marker::RelPrev(2)),
+                            Action::InsertText("\u{981}"),
+                            Action::Shift(StateId::ShorState),
+                        ],
+                    },
+                    CondClause {
+                        test: int(1),
+                        actions: &[Action::Shift(StateId::Init)],
+                    },
+                ])],
+            },
+            Branch::Map {
+                map: MapId::Slicer4,
+                actions: &[Action::Cond(&[
+                    CondClause {
+                        test: op(
+                            Or,
+                            &[
+                                op(Eq, &[var(VarId::CmpdCnstFlag), int(1)]),
+                                op(Eq, &[var(VarId::FrstCnstID), int(16)]),
+                            ],
+                        ),
+                        actions: &[
+                            Action::DeleteMarker(Marker::Prev),
+                            Action::Shift(StateId::SlashState),
+                        ],
+                    },
+                    CondClause {
+                        test: int(1),
+                        actions: &[Action::Shift(StateId::SlashState)],
+                    },
+                ])],
             },
             Branch::Map {
                 map: MapId::Diacritic,
@@ -3422,7 +3686,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 Action::MoveMarker(Marker::Prev),
                                 Action::DeleteMarker(Marker::Prev),
                                 Action::MoveMarker(Marker::End),
-                                Action::Set(SetCmd::Set, VarId::PCID, var(VarId::P2CID)),
+                                Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::ScndCnstID)),
                                 Action::Shift(StateId::ByanjonState),
                             ],
                         },
@@ -3432,7 +3696,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 Action::MoveMarker(Marker::Prev),
                                 Action::DeleteMarker(Marker::RelPrev(2)),
                                 Action::MoveMarker(Marker::End),
-                                Action::Set(SetCmd::Set, VarId::PCID, var(VarId::P2CID)),
+                                Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::ScndCnstID)),
                                 Action::Shift(StateId::ByanjonState),
                             ],
                         },
@@ -3444,7 +3708,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("কখ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(2)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(2)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3453,7 +3717,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("গগ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(3)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(3)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3462,7 +3726,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("ণন"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(20)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(20)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3471,7 +3735,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("তট"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(11)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(11)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3480,7 +3744,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("দড"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(13)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(13)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3489,7 +3753,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("নচ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(6)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(6)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3498,7 +3762,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("নছ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(7)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(7)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3507,7 +3771,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("নজ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(8)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(8)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3516,7 +3780,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("নঝ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(9)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(9)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3525,7 +3789,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("নণ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(15)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(15)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3534,7 +3798,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(3)),
                                         Action::InsertText("ষন"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(20)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(20)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3543,7 +3807,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
                                         Action::InsertText("ন\u{9cd}সট"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(11)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(11)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3552,7 +3816,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
                                         Action::InsertText("ম\u{9cd}পল"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(28)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(28)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3561,7 +3825,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
                                         Action::InsertText("জ\u{9cd}ঞগ"),
-                                        Action::Set(SetCmd::Set, VarId::PCID, int(3)),
+                                        Action::Set(SetCmd::Set, VarId::FrstCnstID, int(3)),
                                         Action::Shift(StateId::ByanjonState),
                                     ],
                                 },
@@ -3591,7 +3855,18 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::Slicer3,
-                actions: &[Action::Shift(StateId::Init)],
+                actions: &[
+                    Action::DeleteMarker(Marker::RelPrev(2)),
+                    Action::InsertText("\u{981}"),
+                    Action::Shift(StateId::ShorState),
+                ],
+            },
+            Branch::Map {
+                map: MapId::Slicer4,
+                actions: &[
+                    Action::DeleteMarker(Marker::Prev),
+                    Action::Shift(StateId::SlashState),
+                ],
             },
             Branch::Map {
                 map: MapId::Prithayok,
@@ -3606,7 +3881,20 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::Biram,
-                actions: &[Action::Shift(StateId::ShorState)],
+                actions: &[Action::Cond(&[
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(1)]),
+                        actions: &[Action::Shift(StateId::DotState)],
+                    },
+                    CondClause {
+                        test: op(Eq, &[var(VarId::Overflow), int(2)]),
+                        actions: &[Action::Shift(StateId::CommaState)],
+                    },
+                    CondClause {
+                        test: int(1),
+                        actions: &[Action::Shift(StateId::Init)],
+                    },
+                ])],
             },
             Branch::Map {
                 map: MapId::Kar,
@@ -3620,8 +3908,8 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             test: op(
                                 And,
                                 &[
-                                    op(Eq, &[var(VarId::PCID), int(27)]),
-                                    op(Eq, &[var(VarId::CID), int(27)]),
+                                    op(Eq, &[var(VarId::FrstCnstID), int(27)]),
+                                    op(Eq, &[var(VarId::CnstID), int(27)]),
                                 ],
                             ),
                             actions: &[
@@ -3630,17 +3918,17 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 Action::DeleteMarker(Marker::Prev),
                                 Action::MoveMarker(Marker::End),
                                 Action::Shift(StateId::RrState),
-                                Action::Set(SetCmd::Set, VarId::CID, int(187)),
+                                Action::Set(SetCmd::Set, VarId::CnstID, int(187)),
                             ],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(191)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(191)]),
                             actions: &[Action::Cond(&[CondClause {
-                                test: op(Eq, &[var(VarId::CID), int(27)]),
+                                test: op(Eq, &[var(VarId::CnstID), int(27)]),
                                 actions: &[
                                     Action::DeleteMarker(Marker::RelPrev(4)),
-                                    Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                    Action::Set(SetCmd::Set, VarId::CID, int(187)),
+                                    Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                    Action::Set(SetCmd::Set, VarId::CnstID, int(187)),
                                     Action::InsertText("রররর"),
                                     Action::Shift(StateId::RrState),
                                 ],
@@ -3652,13 +3940,13 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                                 Action::MoveMarker(Marker::Prev),
                                 Action::InsertChar('\u{9cd}'),
                                 Action::MoveMarker(Marker::End),
-                                Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
+                                Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
                                 Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                             ],
                         },
                     ]),
-                    Action::Set(SetCmd::Set, VarId::PrevCID, var(VarId::PCID)),
-                    Action::Set(SetCmd::Set, VarId::PCID, var(VarId::CID)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, var(VarId::FrstCnstID)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::CnstID)),
                 ],
             },
             Branch::Map {
@@ -3666,49 +3954,49 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                 actions: &[
                     Action::Cond(&[
                         CondClause {
-                            test: op(Eq, &[var(VarId::CID), int(0)]),
+                            test: op(Eq, &[var(VarId::CnstID), int(0)]),
                             actions: &[Action::Shift(StateId::Init)],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(39)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(39)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(15)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(15)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(172)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(172)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ণ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(20)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(20)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(172)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(172)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(11)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ণ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(173)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(173)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ব"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(25)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(25)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(174)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(174)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ক\u{9cd}ষ\u{9cd}ম"),
                                     ],
@@ -3720,20 +4008,20 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(65)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(65)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
                                     test: op(
                                         And,
                                         &[
-                                            op(Eq, &[var(VarId::CID), int(3)]),
-                                            op(Eq, &[var(VarId::P2CID), int(3)]),
+                                            op(Eq, &[var(VarId::CnstID), int(3)]),
+                                            op(Eq, &[var(VarId::ScndCnstID), int(3)]),
                                         ],
                                     ),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(175)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(175)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(14)),
                                         Action::InsertText("গ\u{9cd}\u{200c}গ"),
@@ -3746,35 +4034,35 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(53)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(53)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(2)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(2)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(58)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(58)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(1)),
                                         Action::InsertText("ঙ\u{9cd}ক\u{9cd}ষ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(30)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(30)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(58)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(58)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ঙ\u{9cd}ক\u{9cd}ষ"),
                                     ],
                                 },
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(16)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(16)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(176)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(176)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ঙ\u{9cd}\u{200c}ক\u{9cd}ত"),
                                     ],
@@ -3786,14 +4074,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(60)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(60)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(177)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(177)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("চ\u{9cd}ছ\u{9cd}ব"),
                                     ],
@@ -3805,14 +4093,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(63)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(63)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(178)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(178)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("জ\u{9cd}জ\u{9cd}ব"),
                                     ],
@@ -3824,14 +4112,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(84)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(84)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(179)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(179)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ত\u{9cd}ত\u{9cd}ব"),
                                     ],
@@ -3843,14 +4131,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(92)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(92)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(180)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(180)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("দ\u{9cd}দ\u{9cd}ব"),
                                     ],
@@ -3862,14 +4150,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(103)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(103)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(181)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(181)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ন\u{9cd}ত\u{9cd}ব"),
                                     ],
@@ -3881,14 +4169,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(105)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(105)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(182)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(182)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("ন\u{9cd}দ\u{9cd}ব"),
                                     ],
@@ -3900,14 +4188,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(159)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(159)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(23)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(23)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(183)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(183)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("স\u{9cd}ত\u{9cd}ব"),
                                     ],
@@ -3919,14 +4207,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(162)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(162)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(184)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(184)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(1)),
                                         Action::InsertText("স\u{9cd}প\u{9cd}ল"),
                                     ],
@@ -3938,14 +4226,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(110)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(110)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(11)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(11)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(185)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(185)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(12)),
                                         Action::InsertText("নস\u{9cd}ট"),
@@ -3958,14 +4246,14 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             ])],
                         },
                         CondClause {
-                            test: op(Eq, &[var(VarId::PCID), int(126)]),
+                            test: op(Eq, &[var(VarId::FrstCnstID), int(126)]),
                             actions: &[Action::Cond(&[
                                 CondClause {
-                                    test: op(Eq, &[var(VarId::CID), int(28)]),
+                                    test: op(Eq, &[var(VarId::CnstID), int(28)]),
                                     actions: &[
                                         Action::DeleteMarker(Marker::RelPrev(4)),
-                                        Action::Set(SetCmd::Set, VarId::P2CID, var(VarId::CID)),
-                                        Action::Set(SetCmd::Set, VarId::CID, int(186)),
+                                        Action::Set(SetCmd::Set, VarId::ScndCnstID, var(VarId::CnstID)),
+                                        Action::Set(SetCmd::Set, VarId::CnstID, int(186)),
                                         Action::Set(SetCmd::Set, VarId::SLICER, int(3)),
                                         Action::Set(SetCmd::Set, VarId::ALTERNATE, int(13)),
                                         Action::InsertText("মপ\u{9cd}ল"),
@@ -3982,8 +4270,8 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                             actions: &[Action::Shift(StateId::ByanjonState)],
                         },
                     ]),
-                    Action::Set(SetCmd::Set, VarId::PrevCID, var(VarId::PCID)),
-                    Action::Set(SetCmd::Set, VarId::PCID, var(VarId::CID)),
+                    Action::Set(SetCmd::Set, VarId::PrvCnstID, var(VarId::FrstCnstID)),
+                    Action::Set(SetCmd::Set, VarId::FrstCnstID, var(VarId::CnstID)),
                 ],
             },
             Branch::Map {
@@ -4034,12 +4322,7 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
             },
             Branch::Map {
                 map: MapId::SymbolsIdentity,
-                actions: &[
-                    Action::MoveMarker(Marker::Prev),
-                    Action::DeleteMarker(Marker::Prev),
-                    Action::MoveMarker(Marker::End),
-                    Action::Shift(StateId::BlindState2),
-                ],
+                actions: &[],
             },
             Branch::Map {
                 map: MapId::Prithayok,
@@ -4049,6 +4332,23 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                     Action::MoveMarker(Marker::End),
                     Action::Shift(StateId::BlindState2),
                 ],
+            },
+            Branch::Map {
+                map: MapId::Blinder,
+                actions: &[],
+            },
+            Branch::Map {
+                map: MapId::SymbolsNoIdentity,
+                actions: &[
+                    Action::MoveMarker(Marker::Prev),
+                    Action::DeleteMarker(Marker::Prev),
+                    Action::MoveMarker(Marker::End),
+                    Action::Shift(StateId::BlindState2),
+                ],
+            },
+            Branch::Map {
+                map: MapId::Backspace,
+                actions: &[],
             },
         ],
     },
@@ -4072,11 +4372,68 @@ pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
                 actions: &[],
             },
             Branch::Map {
+                map: MapId::Blinder,
+                actions: &[],
+            },
+            Branch::Map {
+                map: MapId::SymbolsNoIdentity,
+                actions: &[],
+            },
+            Branch::Map {
                 map: MapId::Prithayok,
                 actions: &[
                     Action::DeleteMarker(Marker::Prev),
                     Action::Shift(StateId::Init),
                 ],
+            },
+            Branch::Map {
+                map: MapId::Backspace,
+                actions: &[],
+            },
+        ],
+    },
+    State {
+        id: StateId::SlashState,
+        branches: &[
+            Branch::Map {
+                map: MapId::Slicer,
+                actions: &[Action::Commit],
+            },
+            Branch::Map {
+                map: MapId::Backspace,
+                actions: &[],
+            },
+        ],
+    },
+    State {
+        id: StateId::DotState,
+        branches: &[
+            Branch::Init {
+                actions: &[Action::Set(SetCmd::Set, VarId::Overflow, int(0))],
+            },
+            Branch::Map {
+                map: MapId::Dot,
+                actions: &[Action::Commit],
+            },
+            Branch::Map {
+                map: MapId::Backspace,
+                actions: &[],
+            },
+        ],
+    },
+    State {
+        id: StateId::CommaState,
+        branches: &[
+            Branch::Init {
+                actions: &[Action::Set(SetCmd::Set, VarId::Overflow, int(0))],
+            },
+            Branch::Map {
+                map: MapId::Comma,
+                actions: &[Action::Commit],
+            },
+            Branch::Map {
+                map: MapId::Backspace,
+                actions: &[],
             },
         ],
     },
