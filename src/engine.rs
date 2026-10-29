@@ -102,6 +102,7 @@ impl<IM: InputMethod> Engine<IM> {
 
     /// The upcoming text available for rule matching: `self.requeue` (almost always empty),
     /// followed by a bounded slice of `input[pos..]`.
+    ///
     /// Zero-copy (`Cow::Borrowed`, a plain `&str` slice of `input`) whenever there's nothing queued,
     /// which is the common case.
     fn lookahead<'i>(&self, input: &'i str, pos: usize) -> Cow<'i, str> {
@@ -126,8 +127,8 @@ impl<IM: InputMethod> Engine<IM> {
         *pos += n;
     }
 
-    /// Consume and return exactly one character from the front of the
-    /// upcoming text (`requeue` first, then `input`).
+    /// Consume and return exactly one character from the front of the upcoming text
+    /// (`requeue` first, then `input`).
     fn next_char(&mut self, input: &str, pos: &mut usize) -> Option<char> {
         if let Some(c) = self.requeue.chars().next() {
             self.requeue.drain(..c.len_utf8());
@@ -140,9 +141,8 @@ impl<IM: InputMethod> Engine<IM> {
 
     fn step(&mut self, input: &str, pos: &mut usize) {
         let Some(state) = self.input_method.get_state(self.state) else {
-            if let Some(c) = self.next_char(input, pos) {
-                self.preedit.push(c);
-            }
+            let c = self.next_char(input, pos);
+            self.preedit.extend(c);
             return;
         };
 
@@ -164,37 +164,29 @@ impl<IM: InputMethod> Engine<IM> {
             }
         }
 
+        self.last_snapshot = Some(self.snapshot());
+        self.current_pos = self.preedit.len();
+
         if let Some((rule, len, branch_actions)) = best {
-            self.last_snapshot = Some(self.snapshot());
-            self.current_position = self.preedit.len();
-            // Consume the matched text *before* running its actions: a `pushback` inside those
-            // actions mutates `self.requeue`, and must not be mistaken for text that was already
-            // part of this match (that would either double-consume or -- as it happened in the past
-            // -- never advance `pos` at all, looping forever on the same input).
+            // Consume the matched text *before* running its actions
+            // A `pushback` inside those actions mutates `self.requeue`, and must not be mistaken for text
+            // for text that was already part of this match.
+            // That would either double-consume or, never advance `pos` at all, looping forever
+            // on the same input.
             self.advance(pos, len);
             self.unhandled = false;
             self.exec_all(rule.actions);
             if !self.unhandled {
                 self.exec_all(branch_actions);
             }
+        } else if let Some(Branch::Nil { actions }) = state
+            .branches
+            .iter()
+            .find(|b| matches!(b, Branch::Nil { .. }))
+        {
+            self.exec_all(actions);
         } else {
-            // Likewise: grab the one character being passed through before running
-            // the `nil` branch's actions, so a `pushback` there can't get mistaken for it.
-            let passthrough = self.next_char(input, pos);
-            if let Some(Branch::Nil { actions }) = state
-                .branches
-                .iter()
-                .find(|b| matches!(b, Branch::Nil { .. }))
-            {
-                self.last_snapshot = Some(self.snapshot());
-                self.current_position = self.preedit.len();
-                self.exec_all(actions);
-            } else {
-                self.last_snapshot = Some(self.snapshot());
-                self.current_position = self.preedit.len();
-                self.set_state(self.input_method.initial_state());
-            }
-            self.requeue.extend(passthrough);
+            self.set_state(self.input_method.initial_state());
         }
     }
 
