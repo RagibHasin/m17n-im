@@ -35,7 +35,10 @@ actual: {actual}"#
             }
         }
 
-        assert!(n_failed == 0, "Failed {} test cases", n_failed);
+        assert!(
+            n_failed == 0,
+            "Failed {n_failed} test cases with \"{path}\""
+        );
     }
 
     evaluate("testcases-classic.tsv", engine_classic());

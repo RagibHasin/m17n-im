@@ -203,14 +203,40 @@ fn direct_engine_matches_known_conversions_for_bundled_example() {
         ("d;i", "দই"),
         ("amar", "আমার"),
         ("kalam", "কালাম"),
+        (",", ","),
+        ("(", "("),
+        (")", ")"),
+        ("+", "+"),
+        ("-", "-"),
+        ("=", "="),
+        ("_", "_"),
+        (";", ";"),
+        (":", ":"),
+        ("{", "{"),
+        ("}", "}"),
+        ("[", "["),
+        ("]", "]"),
+        ("]", "]"),
     ];
     let mut engine = Engine::new(
         file.into_input_method(&mut Preprocessor::default())
             .unwrap(),
     );
+    let mut n_failed = 0;
     for (input, expected) in cases {
-        assert_eq!(engine.convert(input), expected, "converting {input:?}");
+        let actual = engine.convert(input);
+        if expected != actual {
+            println!(
+                r#"
+input: {input}
+expected: {expected}
+actual: {actual}"#
+            );
+            n_failed += 1;
+        }
     }
+
+    assert!(n_failed == 0, "Failed {n_failed} test");
 }
 
 #[test]
@@ -239,7 +265,10 @@ actual: {actual}"#
             }
         }
 
-        assert!(n_failed == 0, "Failed {} test cases", n_failed);
+        assert!(
+            n_failed == 0,
+            "Failed {n_failed} test cases with \"{mim_path}\""
+        );
     }
 
     evaluate(
