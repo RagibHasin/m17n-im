@@ -35,6 +35,7 @@ pub struct Engine<IM: InputMethod + 'static> {
     /// of the original input.
     requeue: String,
     unhandled: bool,
+    unmatched: bool,
 }
 
 impl<IM: InputMethod> Engine<IM> {
@@ -53,6 +54,7 @@ impl<IM: InputMethod> Engine<IM> {
             last_snapshot: None,
             requeue: String::new(),
             unhandled: false,
+            unmatched: false,
         };
         engine.set_state(initial_state);
         engine
@@ -76,9 +78,11 @@ impl<IM: InputMethod> Engine<IM> {
         self.vars.clear();
         self.preedit.clear();
         self.current_pos = 0;
+        self.marks.clear();
         self.last_snapshot = None;
         self.requeue.clear();
         self.unhandled = false;
+        self.unmatched = false;
 
         self.set_state(self.input_method.initial_state());
 
@@ -179,14 +183,29 @@ impl<IM: InputMethod> Engine<IM> {
             if !self.unhandled {
                 self.exec_all(branch_actions);
             }
-        } else if let Some(Branch::Nil { actions }) = state
-            .branches
-            .iter()
-            .find(|b| matches!(b, Branch::Nil { .. }))
-        {
-            self.exec_all(actions);
         } else {
-            self.set_state(self.input_method.initial_state());
+            // Likewise: grab the one character being passed through before running
+            // the `nil` branch's actions, so a `pushback` there can't get mistaken for it.
+            let passthrough = self.next_char(input, pos);
+
+            let requeue = if let Some(Branch::Nil { actions }) = state
+                .branches
+                .iter()
+                .find(|b| matches!(b, Branch::Nil { .. }))
+            {
+                self.exec_all(actions);
+                true
+            } else {
+                self.set_state(self.input_method.initial_state());
+                self.unmatched = !self.unmatched;
+                self.unmatched
+            };
+
+            if requeue {
+                self.requeue.extend(passthrough);
+            } else {
+                self.preedit.extend(passthrough);
+            }
         }
     }
 
