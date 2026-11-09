@@ -5,15 +5,31 @@ This changelog follows the patterns described here: <https://keepachangelog.com/
 Subheadings to categorize changes are `added, changed, deprecated, removed, fixed, security`.
 
 -->
+<!-- markdownlint-configure-file
+{
+  "no-duplicate-heading": {
+    "siblings_only": true
+  }
+}
+-->
 
 # Changelog
 
-The latest published m17n-im release is [0.2.0](#020-2026-10-29) which was released on 2026-10-29.
-You can find its changes [documented below](#020-2026-10-29).
+The latest published m17n-im release is [0.2.1](#021-2026-11-09) which was released on 2026-11-09.
+You can find its changes [documented below](#021-2026-11-09).
 
 ## [Unreleased][]
 
 This release has an MSRV of 1.88.
+
+## [0.2.1][] (2026-11-09)
+
+This release has an MSRV of 1.88.
+
+### Fixed
+
+- Input characters unmatched by any rule was not correctly being pushed into pre-edit buffer, causing infinite loop.
+  This was a regression in v0.2.0 and has been fixed.
 
 ## [0.2.0][] (2026-10-29)
 
@@ -40,6 +56,7 @@ This release has an MSRV of 1.88.
 - `InputMethod` abstraction and its two user facing instance `ParsedInputMethod` and `EmbeddableInputMethod`.
 - `.mim` file parser and Rust code generator for it.
 
-[Unreleased]: https://github.com/RagibHasin/m17n-im/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/RagibHasin/m17n-im/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.2.1
 [0.2.0]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.2.0
 [0.1.0]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.1.0
