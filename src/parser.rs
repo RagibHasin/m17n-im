@@ -8,7 +8,7 @@ use winnow::Parser as _;
 
 use crate::ast::*;
 use crate::ident::{Ident, Interner};
-use crate::sexpr::{SExpr, file};
+use crate::sexpr::{file, SExpr};
 
 #[derive(Debug)]
 /// An error originated from parsing or executing an m17n iniput method.
@@ -249,10 +249,10 @@ impl Parser {
                 SExpr::Symbol(id) => extra_id = Some(self.intern(id)),
                 SExpr::Str(_) => {}
                 SExpr::List(list) => {
-                    if let [head, v, ..] = list.as_slice()
-                        && head.symbol() == Some("version")
-                    {
-                        version = Some(v.to_string());
+                    if let [head, v, ..] = list.as_slice() {
+                        if head.symbol() == Some("version") {
+                            version = Some(v.to_string());
+                        }
                     }
                 }
             }
@@ -325,18 +325,17 @@ impl Parser {
     }
 
     fn parse_value_candidate(&mut self, n: &SExpr<'_>) -> MimResult<ValueCandidate> {
-        Ok(
-            if let SExpr::List(kids) = n
-                && !n.head_symbol().map(is_action_keyword).unwrap_or(false)
+        if let SExpr::List(kids) = n {
+            if !n.head_symbol().map(is_action_keyword).unwrap_or(false)
                 && kids.len() == 2
                 && matches!(kids[0], SExpr::Symbol(_))
-                && let (Ok(from), Ok(to)) = (kids[0].num(), kids[1].num())
             {
-                ValueCandidate::Range(from, to)
-            } else {
-                ValueCandidate::Value(self.parse_value(n)?)
-            },
-        )
+                if let (Ok(from), Ok(to)) = (kids[0].num(), kids[1].num()) {
+                    return Ok(ValueCandidate::Range(from, to));
+                }
+            }
+        }
+        Ok(ValueCandidate::Value(self.parse_value(n)?))
     }
 
     fn parse_value(&mut self, n: &SExpr<'_>) -> MimResult<Value> {
@@ -462,9 +461,7 @@ impl Parser {
     fn parse_key_event(&mut self, n: &SExpr<'_>) -> MimResult<KeyEvent> {
         match n {
             SExpr::Symbol(s) => Ok(
-                if let Some(rest) = s.strip_prefix('?')
-                    && let Some(c) = rest.chars().next()
-                {
+                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
                     KeyEvent::Code(c as u32)
                 } else if let Some(v) = symbol_num(s) {
                     KeyEvent::Code(v.try_into().map_err(|_| {
@@ -590,9 +587,7 @@ impl Parser {
                     })?;
                     return Ok(Action::InsertChar(c));
                 }
-                if let Some(rest) = s.strip_prefix('?')
-                    && let Some(c) = rest.chars().next()
-                {
+                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
                     return Ok(Action::InsertChar(c));
                 }
                 return Ok(Action::InsertVariable(self.intern(s)));
@@ -608,11 +603,10 @@ impl Parser {
 
         let is_keyword = head_text.map(is_action_keyword).unwrap_or(false);
         if !is_keyword {
-            if let Some(h) = head_text
-                && !kids[0].looks_like_candidate_group()
-                && kids.len() == 1
-            {
-                return Ok(Action::MacroCall(self.intern(h)));
+            if let Some(h) = head_text {
+                if !kids[0].looks_like_candidate_group() && kids.len() == 1 {
+                    return Ok(Action::MacroCall(self.intern(h)));
+                }
             }
             let groups = kids
                 .iter()
@@ -818,11 +812,9 @@ impl Parser {
     }
 
     fn parse_condition(&mut self, x: &SExpr<'_>) -> MimResult<Condition> {
-        Ok(
-            if let SExpr::List(args) = x
-                && let [op, left, right] = args.as_slice()
-            {
-                Condition {
+        if let SExpr::List(args) = x {
+            if let [op, left, right] = args.as_slice() {
+                return Ok(Condition {
                     op: Some(op.symbol().and_then(parse_rel_operator).ok_or_else(|| {
                         MimError::Semantic(
                             "condition head must be an operator or expression".into(),
@@ -830,15 +822,14 @@ impl Parser {
                     })?),
                     left: self.parse_expr(left)?,
                     right: Some(self.parse_expr(right)?),
-                }
-            } else {
-                Condition {
-                    op: None,
-                    left: self.parse_expr(x)?,
-                    right: None,
-                }
-            },
-        )
+                });
+            }
+        }
+        Ok(Condition {
+            op: None,
+            left: self.parse_expr(x)?,
+            right: None,
+        })
     }
 
     fn parse_cond_form(&mut self, kids: &[SExpr<'_>]) -> MimResult<Action> {
@@ -860,9 +851,7 @@ impl Parser {
     fn parse_expr(&mut self, x: &SExpr<'_>) -> MimResult<Expr> {
         Ok(match x {
             SExpr::Symbol(s) => {
-                if let Some(rest) = s.strip_prefix('?')
-                    && let Some(c) = rest.chars().next()
-                {
+                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
                     Expr::Integer(c as i32)
                 } else if let Some(v) = symbol_num(s) {
                     Expr::Integer(v)

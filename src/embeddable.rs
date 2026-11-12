@@ -43,9 +43,9 @@ impl<MapId: Id, MarkerId: Id, StateId: Id, VarId: Id> InputMethod
     }
 }
 
-#[expect(missing_docs, reason = "doc hidden implementation details")]
+#[allow(missing_docs)]
 pub mod helpers {
-    pub use crate::{EmbeddableInputMethod, ir::*};
+    pub use crate::{ir::*, EmbeddableInputMethod};
 
     pub use Operator::*;
 

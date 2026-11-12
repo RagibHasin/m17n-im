@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-use crate::{MimError, ast, ident::Ident, ir::*, preprocess::Preprocessor};
+use crate::{ast, ident::Ident, ir::*, preprocess::Preprocessor, MimError};
 
 /// An [`InputMethod`] that holds macro inlined intermediate representation (IR) of a `.mim` file.
 ///

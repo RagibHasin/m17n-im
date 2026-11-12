@@ -78,8 +78,8 @@ pub use engine::Engine;
 mod embeddable;
 #[cfg_attr(docsrs, doc(cfg(feature = "embed")))]
 #[cfg(feature = "embed")]
-pub use embeddable::EmbeddableInputMethod;
-#[cfg_attr(docsrs, doc(cfg(feature = "embed")))]
-#[cfg(feature = "embed")]
 #[doc(hidden)]
 pub use embeddable::helpers as __embed;
+#[cfg_attr(docsrs, doc(cfg(feature = "embed")))]
+#[cfg(feature = "embed")]
+pub use embeddable::EmbeddableInputMethod;

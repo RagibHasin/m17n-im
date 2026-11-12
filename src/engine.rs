@@ -154,14 +154,14 @@ impl<IM: InputMethod> Engine<IM> {
 
         let mut best/*: Option<(&'a Rule, usize, &'a [Action])>*/ = None;
         for branch in state.branches {
-            if let Branch::Map { map, actions } = branch
-                && let Some(map) = self.input_method.get_map(*map)
-            {
-                for rule in map.text_rules {
-                    if lookahead.starts_with(rule.keyseq) {
-                        let len = rule.keyseq.len();
-                        if best.is_none_or(|(_, best_len, _)| len > best_len) {
-                            best = Some((rule, len, actions));
+            if let Branch::Map { map, actions } = branch {
+                if let Some(map) = self.input_method.get_map(*map) {
+                    for rule in map.text_rules {
+                        if lookahead.starts_with(rule.keyseq) {
+                            let len = rule.keyseq.len();
+                            if !best.is_some_and(|(_, best_len, _)| len <= best_len) {
+                                best = Some((rule, len, actions));
+                            }
                         }
                     }
                 }
@@ -363,7 +363,7 @@ impl<IM: InputMethod> Engine<IM> {
             }
             Action::InsertVariable(name) => {
                 let c = get_value_from_vecmap(&self.vars, name).unwrap_or(0);
-                if let Some(c) = char::from_u32(c.cast_unsigned()) {
+                if let Some(c) = char::from_u32(c as u32) {
                     self.preedit.insert(self.current_pos, c);
                     self.current_pos += 1;
                 }

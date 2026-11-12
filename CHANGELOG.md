@@ -20,7 +20,7 @@ You can find its changes [documented below](#021-2026-11-09).
 
 ## [Unreleased][]
 
-This release has an MSRV of 1.88.
+This release has an MSRV of 1.75.
 
 ## [0.2.1][] (2026-11-09)
 

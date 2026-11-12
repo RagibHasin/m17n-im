@@ -2,7 +2,7 @@
 
 //! Parser tests
 
-use m17n_im::{Engine, Parser, Preprocessor, ast::*};
+use m17n_im::{ast::*, Engine, Parser, Preprocessor};
 
 #[test]
 fn parses_declaration_title_description() {
