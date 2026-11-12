@@ -15,15 +15,10 @@ rustdoc-args = ["--cfg", "docsrs"]
 # rustdoc-scrape-examples tracking issue https://github.com/rust-lang/rust/issues/88791
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
 
-[workspace]
-members = ["examples/bn-khipro"]
-
-[workspace.package]
-version = "0.2.1"
-edition = "2021"
-rust-version = "1.75"
-repository = "https://github.com/RagibHasin/m17n-im"
-license = "MIT"
+[features]
+codegen = ["dynamic"]
+dynamic = ["dep:winnow"]
+embed = []
 
 [[example]]
 name = "interpret"
@@ -31,11 +26,6 @@ required-features = ["dynamic"]
 
 [dependencies]
 winnow = { version = "1.0.5", default-features = false, features = ["ascii", "std"], optional = true }
-
-[features]
-codegen = ["dynamic"]
-dynamic = ["dep:winnow"]
-embed = []
 
 [lints]
 # This one may vary depending on the project.
@@ -104,6 +94,16 @@ clippy.return_self_not_must_use = "warn"
 clippy.shadow_unrelated = "warn"
 
 # END LINEBENDER LINT SET
+
+[workspace]
+members = ["examples/bn-khipro"]
+
+[workspace.package]
+version = "0.2.1"
+edition = "2021"
+rust-version = "1.75"
+repository = "https://github.com/RagibHasin/m17n-im"
+license = "MIT"
 
 [profile.ci]
 inherits = "dev"
