@@ -460,9 +460,8 @@ impl Parser {
 
     fn parse_key_event(&mut self, n: &SExpr<'_>) -> MimResult<KeyEvent> {
         match n {
-            SExpr::Symbol(s) => {
-                let ch = s.strip_prefix('?').and_then(|rest| rest.chars().next());
-                Ok(if let Some(c) = ch {
+            SExpr::Symbol(s) => Ok(
+                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
                     KeyEvent::Code(c as u32)
                 } else if let Some(v) = symbol_num(s) {
                     KeyEvent::Code(v.try_into().map_err(|_| {
@@ -470,8 +469,8 @@ impl Parser {
                     })?)
                 } else {
                     self.parse_key_symbol(s)
-                })
-            }
+                },
+            ),
             other => err(format!("invalid key event: {}", other.kind())),
         }
     }
@@ -852,8 +851,7 @@ impl Parser {
     fn parse_expr(&mut self, x: &SExpr<'_>) -> MimResult<Expr> {
         Ok(match x {
             SExpr::Symbol(s) => {
-                let ch = s.strip_prefix('?').and_then(|rest| rest.chars().next());
-                if let Some(c) = ch {
+                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
                     Expr::Integer(c as i32)
                 } else if let Some(v) = symbol_num(s) {
                     Expr::Integer(v)
