@@ -42,7 +42,7 @@ use winnow::token::take_till;
 use winnow::{ModalResult, Parser};
 
 #[derive(Debug, Clone, PartialEq)]
-#[expect(unnameable_types, reason = "implementation details")]
+#[allow(unnameable_types)]
 pub enum SExpr<'s> {
     /// A bare atom: could be a name, an operator, or (per `crate::parser`'s later interpretation)
     /// an integer literal. The reader itself makes no distinction, matching the grammar.

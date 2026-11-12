@@ -42,10 +42,7 @@ impl Interner {
         Self::default()
     }
 
-    #[expect(
-        clippy::cast_possible_truncation,
-        reason = "infinitesimal chance that the number of ident reaches u32::MAX"
-    )]
+    #[allow(clippy::cast_possible_truncation)]
     pub(crate) fn intern(&mut self, s: &str) -> Ident {
         if let Some(&id) = self.lookup.get(s) {
             return id;

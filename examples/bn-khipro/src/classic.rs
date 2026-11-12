@@ -66,7 +66,7 @@ pub enum VarId {
 }
 impl Id for VarId {}
 
-pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
+pub const MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
     Map {
         id: MapId::Shor,
         text_rules: &[
@@ -864,7 +864,7 @@ pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = &[
     },
 ];
 
-pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
+pub const STATES: &[State<MapId, MarkerId, StateId, VarId>] = &[
     State {
         id: StateId::Init,
         branches: &[

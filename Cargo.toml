@@ -20,8 +20,8 @@ members = ["examples/bn-khipro"]
 
 [workspace.package]
 version = "0.2.1"
-edition = "2024"
-rust-version = "1.88"
+edition = "2021"
+rust-version = "1.75"
 repository = "https://github.com/RagibHasin/m17n-im"
 license = "MIT"
 
@@ -68,7 +68,6 @@ rust.variant_size_differences = "warn"
 
 clippy.too_many_arguments = "allow"
 
-clippy.allow_attributes_without_reason = "warn"
 clippy.cast_possible_truncation = "warn"
 clippy.cast_possible_wrap = "warn"
 clippy.collection_is_never_read = "warn"
@@ -96,7 +95,6 @@ clippy.wildcard_dependencies = "warn"
 
 # EXTRAS
 
-clippy.allow_attributes = "warn"
 clippy.large_include_file = "warn"
 clippy.match_same_arms = "warn"
 clippy.partial_pub_fields = "warn"

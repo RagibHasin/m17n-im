@@ -12,7 +12,7 @@ use std::io;
 
 use crate::ident::{Ident, Interner};
 use crate::ir::{self, CandidateGroup, KeyEvent};
-use crate::{ParsedInputMethod, preprocess::Preprocessor};
+use crate::{preprocess::Preprocessor, ParsedInputMethod};
 
 type Action = ir::Action<Ident, Ident, Ident>;
 type Branch = ir::Branch<Ident, Ident, Ident, Ident>;
@@ -594,11 +594,11 @@ impl crate::ast::InputMethodFile {
         generator.writeln("")?;
         generator.write_enum(generator.var_ids.clone(), "VarId")?;
         generator.writeln("")?;
-        generator.write("pub static MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = ")?;
+        generator.write("pub const MAPS: &[Map<MapId, MarkerId, StateId, VarId>] = ")?;
         generator.write_slice(&input_method.maps, Generator::write_map)?;
         generator.writeln(';')?;
         generator.writeln("")?;
-        generator.write("pub static STATES: &[State<MapId, MarkerId, StateId, VarId>] = ")?;
+        generator.write("pub const STATES: &[State<MapId, MarkerId, StateId, VarId>] = ")?;
         generator.write_slice(&input_method.states, Generator::write_state)?;
         generator.writeln(';')?;
         generator.writeln("")?;

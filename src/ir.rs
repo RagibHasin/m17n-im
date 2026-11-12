@@ -11,7 +11,7 @@ use std::fmt::Debug;
 pub trait Id: Copy + Eq + Debug + 'static {}
 
 /// Describes the executable set of data derived from a `.mim` file.
-#[expect(clippy::type_complexity, reason = "false positive")]
+#[allow(clippy::type_complexity)]
 pub trait InputMethod: Debug {
     /// Identifier for the maps.
     type MapId: Id;
@@ -72,7 +72,7 @@ pub enum Marker<Id> {
 
 /// See [`crate::ast::Expr`].
 #[derive(Clone, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub enum Expr<VarId: Id> {
     Integer(i32),
     Variable(VarId),
@@ -112,7 +112,7 @@ pub enum Operator {
 
 /// See [`crate::ast::Condition`].
 #[derive(Clone, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct Condition<VarId: Id> {
     pub op: Option<Operator>,
     pub left: Expr<VarId>,
@@ -121,7 +121,7 @@ pub struct Condition<VarId: Id> {
 
 /// See [`crate::ast::CondClause`].
 #[derive(Clone, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct CondClause<MarkerId: Id, StateId: Id, VarId: Id> {
     pub test: Expr<VarId>,
     pub actions: &'static [Action<MarkerId, StateId, VarId>],
@@ -155,7 +155,7 @@ pub enum CandidateGroup {
 
 /// See [`crate::ast::Action`].
 #[derive(Clone, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub enum Action<MarkerId: Id, StateId: Id, VarId: Id> {
     InsertText(&'static str),
     InsertChar(char),
@@ -225,7 +225,7 @@ pub enum KeyModifier {
 
 /// See [`crate::ast::KeyEvent`].
 #[derive(Clone, Copy, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct KeyEvent {
     pub modifiers: &'static [KeyModifier],
     pub base: &'static str,
@@ -233,7 +233,7 @@ pub struct KeyEvent {
 
 /// See [`crate::ast::Rule`] and [`crate::ast::KeySeq::Text`].
 #[derive(Clone, Copy, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct TextRule<MarkerId: Id, StateId: Id, VarId: Id> {
     pub keyseq: &'static str,
     pub actions: &'static [Action<MarkerId, StateId, VarId>],
@@ -241,7 +241,7 @@ pub struct TextRule<MarkerId: Id, StateId: Id, VarId: Id> {
 
 /// See [`crate::ast::Rule`] and [`crate::ast::KeySeq::Events`].
 #[derive(Clone, Copy, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct EventRule<MarkerId: Id, StateId: Id, VarId: Id> {
     pub events: &'static [KeyEvent],
     pub actions: &'static [Action<MarkerId, StateId, VarId>],
@@ -249,7 +249,7 @@ pub struct EventRule<MarkerId: Id, StateId: Id, VarId: Id> {
 
 /// See [`crate::ast::Map`].
 #[derive(Clone, Copy, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct Map<MapId, MarkerId: Id, StateId: Id, VarId: Id> {
     pub id: MapId,
     pub text_rules: &'static [TextRule<MarkerId, StateId, VarId>],
@@ -258,7 +258,7 @@ pub struct Map<MapId, MarkerId: Id, StateId: Id, VarId: Id> {
 
 /// See [`crate::ast::Branch`].
 #[derive(Clone, Copy, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub enum Branch<MapId, MarkerId: Id, StateId: Id, VarId: Id> {
     Map {
         map: MapId,
@@ -274,7 +274,7 @@ pub enum Branch<MapId, MarkerId: Id, StateId: Id, VarId: Id> {
 
 /// See [`crate::ast::State`].
 #[derive(Clone, Copy, Debug)]
-#[expect(missing_docs, reason = "derivative type")]
+#[allow(missing_docs)]
 pub struct State<MapId: Id, MarkerId: Id, StateId: Id, VarId: Id> {
     pub id: StateId,
     pub branches: &'static [Branch<MapId, MarkerId, StateId, VarId>],
