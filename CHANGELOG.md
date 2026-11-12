@@ -6,21 +6,25 @@ Subheadings to categorize changes are `added, changed, deprecated, removed, fixe
 
 -->
 <!-- markdownlint-configure-file
-{
-  "no-duplicate-heading": {
-    "siblings_only": true
-  }
-}
+{ "no-duplicate-heading": { "siblings_only": true } }
 -->
 
 # Changelog
 
-The latest published m17n-im release is [0.2.1](#021-2026-11-09) which was released on 2026-11-09.
-You can find its changes [documented below](#021-2026-11-09).
+The latest published m17n-im release is [0.2.2](#022-2026-11-12) which was released on 2026-11-09.
+You can find its changes [documented below](#022-2026-11-12).
 
 ## [Unreleased][]
 
 This release has an MSRV of 1.75.
+
+## [0.2.2][] (2026-11-12)
+
+This release has an MSRV of 1.75.
+
+### Changed
+
+- This version only changes the MSRV down to 1.75 to support building this with default Rust package found on current LTS releases of Linux distros.
 
 ## [0.2.1][] (2026-11-09)
 
@@ -56,7 +60,8 @@ This release has an MSRV of 1.88.
 - `InputMethod` abstraction and its two user facing instance `ParsedInputMethod` and `EmbeddableInputMethod`.
 - `.mim` file parser and Rust code generator for it.
 
-[Unreleased]: https://github.com/RagibHasin/m17n-im/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/RagibHasin/m17n-im/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.2.2
 [0.2.1]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.2.1
 [0.2.0]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.2.0
 [0.1.0]: https://github.com/RagibHasin/m17n-im/releases/tag/v0.1.0

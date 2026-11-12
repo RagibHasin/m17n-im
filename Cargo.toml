@@ -99,7 +99,7 @@ clippy.shadow_unrelated = "warn"
 members = ["examples/bn-khipro"]
 
 [workspace.package]
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 rust-version = "1.75"
 repository = "https://github.com/RagibHasin/m17n-im"
