@@ -460,17 +460,15 @@ impl Parser {
 
     fn parse_key_event(&mut self, n: &SExpr<'_>) -> MimResult<KeyEvent> {
         match n {
-            SExpr::Symbol(s) => Ok(
-                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
-                    KeyEvent::Code(c as u32)
-                } else if let Some(v) = symbol_num(s) {
-                    KeyEvent::Code(v.try_into().map_err(|_| {
-                        MimError::Semantic(format!("invalid code in key event: {v}\nmust be a u32"))
-                    })?)
-                } else {
-                    self.parse_key_symbol(s)
-                },
-            ),
+            SExpr::Symbol(s) => Ok(if let Some(c) = char_literal(s) {
+                KeyEvent::Code(c as u32)
+            } else if let Some(v) = symbol_num(s) {
+                KeyEvent::Code(v.try_into().map_err(|_| {
+                    MimError::Semantic(format!("invalid code in key event: {v}\nmust be a u32"))
+                })?)
+            } else {
+                self.parse_key_symbol(s)
+            }),
             other => err(format!("invalid key event: {}", other.kind())),
         }
     }
@@ -587,7 +585,7 @@ impl Parser {
                     })?;
                     return Ok(Action::InsertChar(c));
                 }
-                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
+                if let Some(c) = char_literal(s) {
                     return Ok(Action::InsertChar(c));
                 }
                 return Ok(Action::InsertVariable(self.intern(s)));
@@ -851,7 +849,7 @@ impl Parser {
     fn parse_expr(&mut self, x: &SExpr<'_>) -> MimResult<Expr> {
         Ok(match x {
             SExpr::Symbol(s) => {
-                if let Some(c) = s.strip_prefix('?').and_then(|rest| rest.chars().next()) {
+                if let Some(c) = char_literal(s) {
                     Expr::Integer(c as i32)
                 } else if let Some(v) = symbol_num(s) {
                     Expr::Integer(v)
@@ -878,4 +876,8 @@ impl Parser {
             other => return err(format!("invalid EXPRESSION: {}", other.kind())),
         })
     }
+}
+
+fn char_literal(s: &str) -> Option<char> {
+    s.strip_prefix('?').and_then(|rest| rest.chars().next())
 }

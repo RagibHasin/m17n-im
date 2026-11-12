@@ -42,12 +42,13 @@ impl Interner {
         Self::default()
     }
 
-    #[allow(clippy::cast_possible_truncation)]
     pub(crate) fn intern(&mut self, s: &str) -> Ident {
         if let Some(&id) = self.lookup.get(s) {
             return id;
         }
-        let id = Ident(self.strings.len() as u32);
+        let id = Ident(
+            u32::try_from(self.strings.len()).expect("somehow, this MIM has u32::MAX identifiers!"),
+        );
         self.strings.push(s.to_string());
         self.lookup.insert(s.to_string(), id);
         id
